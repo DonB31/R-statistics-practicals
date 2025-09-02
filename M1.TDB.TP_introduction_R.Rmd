@@ -1,11 +1,11 @@
 ---
-title: "Compte rendu TP1 Initiation à R"
+title: "Compte rendu - TP1 Initiation à R"
 author: "Laroussi Labid Bachri"
 date: "01/09/2025"
 output:
-  pdf_document:
-    toc: yes
   html_document:
+    toc: yes
+  pdf_document:
     toc: yes
 ---
 
@@ -45,7 +45,7 @@ Une variable a un nom (défini par l'utilisateur) qui permet d'accéder à son c
 **Créer une variable appelée x qui stocke le résultat du calcul précédent 1 + 2 + 3.** L'affectation d'une valeur à une variable se fait avec <- ou le signe = comme suit dans la console : 
 
 **A compléter**
-```{r}
+```{r, include=FALSE} 
 x= 1+2+3
 ```
 
@@ -73,9 +73,7 @@ double_de_x = 2*x
 
 arrondir_x_divise_par4 = round(x/4)
 
-arrondir_x_divise_par3 = round(x/4 , 2) 
-
-# on ajoute ici l'argument qui permet de choisir combien de chiffres apres la virgule
+arrondir_x_divise_par3 = round(x/4 , 2) # on ajoute ici l'argument qui permet de choisir combien de chiffres apres la virgule
 ```
 
 ## Fonctions
@@ -94,39 +92,63 @@ ecart_type = sd(x)
 ## Lecture et écriture de fichiers contenant des données
 
 ```{r}
-croissance = read.table(file = "/Users/bachri/Documents/M1_BBS/S7/traitement_donnees_bio/TP_TDB/Croissance_plantes.txt" , sep="\t" , header = T , stringsAsFactors = T)
+# Il existe plusieurs façons de selectionner manuellement un fichier 
+# Sous R la fonction x = input("Entrez le chemin du fichier : ") ne marche pas. 
+
+# **file = file.choose()** # Option 1 : on peut utiliser cette fonction pour selectionner manuellement le fichier
+ 
+# Option 2 : # On peut aussi utiliser cette notation pour saisir directement le chemin absolue du fichier ( peut etre plus utile et adapte pour des automatisations par exemple pour éviter avoir a selectionenr manuellement à la souris le fichier)
+# **fichier = readline(prompt = "Entrez le chemin complet du fichier : (astuce : la commande realpath, propre aux systèmes Unix/Linux, donne le chemin absolu d'un fichier) ")** 
+# Ici, nous allons le saisir directement dans le code car lors du Knit vers HTML, on ne peut pas interagir avec RMarkdown. Cette option marche si on execute le script R dans la console. 
+
+fichier = "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/Croissance_plantes.txt"
+croissance = read.table(fichier, sep="\t" , # le separateur qui va etre utilisé est la tabulation mais celui ci peut varier ("\n" , ";" , "," etc)
+                        header = T , # Afficher premiere ligne = noms des colonnes
+                        stringsAsFactors = T) # Interpreter les strings comme Factors ici le poids, taille ou l'origine. Les variables peuvent être qualitative ( origine_geo ) ou quantitatives ( Poids , taille). 
+
+# On recupere les variables, ici les noms de colonnes. 
 variables = names(croissance) 
 croissance$poids
 attach(croissance)
 is_it_from_pyr = origine_geo == 'pyr'
 
 plantes_pyr = which(origine_geo == 'pyr') # identifier quels arbres ont pour originegeo et donc qui ont origine_geo == 'pyr' -> TRUE
+plantes_pyr
 
 pyr = croissance[origine_geo == 'pyr' ,  1:2]
 
-# on va sauvegarder ces données dans un autre fichier .txt
+pyr 
 
+# on va sauvegarder ces données dans un autre fichier .txt
 write.table(pyr , "croissance_plantes_pyr.txt" , quote = F , col.names = T , row.names = F , sep="\t")
 ```
 
 ## Fonctions graphiques 
-```{r}
-summary(origine_geo) # on synthetise les origines des plantes et compter combien de plantes ont tel origine.
-camembert_origine = pie(summary(origine_geo), main = "Origine géographique des plantes",col=rainbow(12))
-barplot(summary(origine_geo), main = "Origine géographique des plantes")
+```{r, fig.cap="Origine geographique des plantes"}
+resume_origine_geo = summary(origine_geo) # on synthetise les origines des plantes et compter combien de plantes ont tel origine.
+camembert_origine = pie(resume_origine_geo
+                        , main = "Origine géographique des plantes", # Titre de la figure
+                        col=rainbow(12))
+barplot(resume_origine_geo, main = "Origine géographique des plantes",
+        col=rainbow(12))
 # on est sur une variable qualitative, on ne va parler de histogramme mais de diagramme en barres
+```
 
-
+```{r}
 # Histogrammes (variable quantitative)
 
-hist(taille, xlim=c(40,90), xlab="Taille(cm)" , ylab = "effectif" , freq=T , main = "Histogramme de la taille des plantes" , col="green")
+hist(taille, xlim=c(40,90), xlab="Taille(cm)" , ylab = "effectif" , freq=T , main = "Histogramme de la taille des plantes" , col=rainbow(10))
+# xlim=c(x,y) sert a limiter les valuers affichées sur l'histogramme.
 
 # Boite à moustaches (variable quantitative)
 boxplot(taille, main="Boxplot de la taille des plantes" , ylab="Taille" , col='salmon')
 
 # Plusieurs boite à moustaches ( une variable quantitative en fonction des modalité d'une variable qualitative )
 
-plot(origine_geo , taille, las=3 , main="Boxplot de la taille des plantes en fonction de l'origine geographique" , col='red' , ylab="Taille" ,xlab="Origines")
+plot(origine_geo , taille, las=3 , main="Boxplot de la taille des plantes en fonction de l'origine geographique" , col='red' , ylab="Taille" ,xlab="Origines", notch=F)
+
+# Les boxplots montrent que certaines origines géographiques présentent une variabilité faible (boîtes très resserrées), alors que d’autres sont plus dispersées.
+#L’ajout d’de l'option (notch=TRUE) nous permet d’avoir une indication sur la comparaison des médianes.  Cela va faire apparaitre des encoches. Si les encoches ne se chevauchent pas, cela suggère des différences de médiane entre groupes. Il faut savoir que cette intérpretation est approximatice et n'équivaut pas a un test statistique.
 
 stripchart(taille~origine_geo , las=1)
 

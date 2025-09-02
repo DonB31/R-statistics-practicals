@@ -1,0 +1,267 @@
+---
+title: "Compte rendu - TP1 Initiation à R"
+author: "Laroussi Labid Bachri"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`" # On peut recuperer automatiquement la date et choisir le format souhaite https://r-coder.com/system-date-time-r/#:~:text=Date()-,The%20Sys.,is%20of%20class%20%22Date%22%20.
+output:
+  html_document:
+    toc: yes
+    theme: 'flatly' # On peut changer les thèmes pour personnaliser l'affichage de notre compte rendu dans le rendu HTML. (Peut necessiter d'installer des packages)
+    # Accessible ici https://rpubs.com/ranydc/rmarkdown_themes
+    # css: cette option permet même d'utiliser un fichier css pour personnaliser le compte rendu. A placer dans le meme dossier. 
+  pdf_document:
+    toc: yes
+params:
+  data: "croissance"
+  fichier_path: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/Croissance_plantes.txt"
+  separateur: "\t"
+---
+
+# 1.Introduction
+## Premiers pas avec R et RMarkdown 
+
+Ce TP a pour but d'initiation au logiciel Rstudio et au language de programmation R dans le cadre de l'UE TDB. 
+
+
+## 1.1 Utilisation de variables 
+
+Les variables (ou objets) permettent de stocker des données qui peuvent être :
+
+* une valeur simple de type numérique (`numeric`), logique (`logical`), chaîne de caractères (`character`) ou qualitative (`factor`).
+* une liste (appelée `vector`).
+* un tableau à 2 dimensions, les colonnes pouvant avoir des types différents (`data.frame`). Ce sont les plus utilisés en statistiques.
+* un tableau à 2 dimensions, toutes les cases ayant le même type (`matrix`).
+* un tableau à plus de 2 dimension (`array`).
+* une combinaison des précédents (`list`). 
+
+Une variable a un nom (défini par l'utilisateur) qui permet d'accéder à son contenu.
+
+**Créer une variable appelée x qui stocke le résultat du calcul précédent 1 + 2 + 3.** L'affectation d'une valeur à une variable se fait avec <- ou le signe = comme suit dans la console : 
+
+L'argument include=TRUE affiche  le code dans le rendu HTML et le resultat également. 
+```{r, include=TRUE} 
+
+x= 1+2+3
+texte = "j'aime bien R"
+logique = TRUE
+```
+
+
+## 1.2 Vecteurs 
+
+
+```{r}
+x = c(2,3,5,8,4,6);longueur = length(x)
+
+# Manipulation des elements du vecteur
+deuxieme_element = x[2]
+deuxieme_element
+
+changer_element = x[2] = 7 # on peut changer des elements
+x
+
+ajouter_element = x[7] = 12 # Ajouter des elements 
+x
+
+retirer_element = x = x[-1] # mais aussi retirer des elements!
+x
+
+acces_plusiuers_elements = x[c(2,4,1)]
+acces_plusiuers_elements
+
+valeurs_2_a_4 = x[2:4]
+valeurs_2_a_4
+
+# Valeurs superieures a 4
+valeurs_superieures_a_4 = x[x>4]
+valeurs_superieures_a_4
+
+# Inverse du vecteur 
+inverse_de_x = 1/x
+inverse_de_x
+
+# Double du vecteur
+double_de_x = 2*x
+double_de_x
+
+# Utilisation de fonction round() 
+arrondir_x_divise_par4 = round(x/4)
+arrondir_x_divise_par4
+
+arrondir_2_x_divise_par4 = round(x/4 , 2) # on ajoute ici l'argument qui permet de choisir combien de chiffres apres la virgule
+arrondir_2_x_divise_par4
+```
+
+## 1.3 Fonctions
+
+## Statistiques descriptives. 
+
+```{r}
+
+# On peut calculer les stastistiques descriptives
+summary(x)
+valeur_min = min(x)
+valeur_min
+valeur_max = max(x)
+valeur_max
+mediane = median(x)
+mediane
+moyenne = mean(x)
+moyenne
+variance = var(x)
+variance
+ecart_type = sd(x) 
+ecart_type 
+
+
+```
+
+# 2.Importation des données. 
+## Lecture et écriture de fichiers contenant des données. 
+
+```{r}
+# Il existe plusieurs façons de selectionner un fichier 
+
+# Option 1 : on peut utiliser cette fonction pour selectionner manuellement le fichier. 
+# **file = file.choose()** 
+ 
+# Option 2 : # On peut aussi utiliser cette notation pour saisir directement le chemin absolue du fichier ( peut etre plus utile et adapte pour des automatisations par exemple pour éviter de devoir selectionner manuellement avec la souris plusieurs fichiers)
+# **fichier = readline(prompt = "Entrez le chemin complet du fichier : (astuce : la commande realpath, propre aux systèmes Unix/Linux, donne le chemin absolu d'un fichier) ")** 
+# Sous R la fonction x = input("Entrez le chemin du fichier : ") ne marche pas. 
+
+# Nous allons le saisir directement dans les params YAML pour le recuperer ici, car lors du Knit vers HTML, on ne peut pas interagir avec RMarkdown. Cette option marche si on execute le script R dans la console. 
+
+fichier = params$fichier_path
+croissance = read.table(fichier, sep= params$separateur , # le separateur qui va etre utilisé est la tabulation mais celui ci peut varier ("\n" , ";" , "," etc)
+                        header = T , # Afficher premiere ligne = noms des colonnes
+                        stringsAsFactors = T) # Interpreter les strings comme Factors ici le poids, taille ou l'origine. Les variables peuvent être qualitative ( origine_geo ) ou quantitatives ( Poids , taille). 
+
+```
+
+```{r, echo=FALSE} 
+# l'argument echo=FALSE n'affiche pas le code dans le rendu HTML mais seulement le resultat. 
+
+# On recupere les variables, ici les noms de colonnes. 
+names(croissance)
+# On recupere les 5 premieres lignes pour verifier la bonne importation de notre fichier. 
+
+cat("5 premieres lignes\n") # https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cat
+head(croissance , 5) 
+
+#On peut analyser la structure de notre data frame. 
+cat("Structure du jeu de données :\n") 
+str(croissance)
+
+```
+# 2.1 Manipulation de nos données 
+
+## Statistiques descriptives
+
+```{r}
+taille_moyenne_plantes = mean(croissance$taille)
+cat("La taille moyenne des plantes est de" ,taille_moyenne_plantes , "centimètres")
+# On peut  utiliser cat() comme parse()
+
+poids_moyen_plantes = mean(croissance$poids)
+cat("Le poids moyen des plantes est de" ,poids_moyen_plantes , "grammes")
+```
+
+```{r, echo=FALSE}
+variance_taille_plantes = var(croissance$taille)
+cat("Le variance des plantes est de" ,variance_taille_plantes)
+
+mediane_poids_plantes = median(croissance$poids)
+cat("La médiance des plantes est de" ,mediane_poids_plantes , "centimètres")
+```
+
+
+## Autres manipulations 
+```{r}
+
+variables = names(croissance) 
+croissance$poids
+attach(croissance)
+poids # On peut faire attach pour éviter d'écrire croisssance$… à chaque fois. 
+
+is_it_from_pyr = origine_geo == 'pyr'
+is_it_from_pyr
+
+plantes_pyr = which(origine_geo == 'pyr') # identifier quels arbres ont pour originegeo et donc qui ont origine_geo == 'pyr' -> TRUE
+plantes_pyr
+
+# Quel est la taille moyenne des plantes provenant de Norwich? 
+
+plantes_norwich = which(origine_geo == 'norwich')
+plantes_norwich
+
+moyenne_plantes_norwich = mean(plantes_norwich)
+# On peut utiliser la focntion paste() pour ameliorer la lisibilité. 
+paste("La taille moyenne des plantes de Norwich est de", moyenne_plantes_norwich) # https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/paste
+# Ceci sert a concatener des variables avec des strings. 
+
+pyr = croissance[origine_geo == 'pyr' ,  1:2]
+pyr 
+
+# Quel est la valeur de poids maximal et minimal des plantes Toulousaines et Espagnoles ? 
+
+tls_esp = croissance[origine_geo == 'toulouse' | origine_geo == 'espagne',1:2]
+tls_esp
+
+
+# L'utilisation de pipe comme operateur. OR en python par exemple. https://www.statology.org/r-which-multiple-conditions/
+
+
+poids_max_plantes_tls_esp = max(tls_esp$poids)
+paste("Le poids maximal des plantes qui proviennent soit de Toulouse soit d'espagne est :", poids_max_plantes_tls_esp , "grammes")
+
+poids_min_plantes_tls_esp = min(tls_esp$poids)
+paste("Le poids minimal des plantes qui proviennent soit de Toulouse soit d'espagne est :", poids_min_plantes_tls_esp , "grammes")
+
+# On va sauvegarder ces données dans un autre fichier .txt
+write.table(tls_esp , "croissance_plantes_tls_esp.txt" , quote = F , col.names = T , row.names = F , sep="\t")
+```
+
+## 2.1 Fonctions graphiques 
+```{r, fig.cap="Origine geographique des plantes"}
+resume_origine_geo = summary(origine_geo) # on synthetise les origines des plantes et compter combien de plantes ont tel origine.
+camembert_origine = pie(resume_origine_geo
+                        , main = "Origine géographique des plantes", # Titre de la figure
+                        col=rainbow(12))
+barplot(resume_origine_geo, main = "Origine géographique des plantes",
+        col=rainbow(12))
+# on est sur une variable qualitative, on ne va parler de histogramme mais de diagramme en barres
+```
+
+```{r}
+# Histogrammes (variable quantitative)
+
+hist(taille, xlim=c(40,90), xlab="Taille(cm)" , ylab = "effectif" , freq=T , main = "Histogramme de la taille des plantes" , col=rainbow(10))
+# xlim=c(x,y) sert a limiter les valuers affichées sur l'histogramme.
+
+# Boite à moustaches (variable quantitative)
+boxplot(taille, main="Boxplot de la taille des plantes" , ylab="Taille" , col='salmon')
+
+# Plusieurs boite à moustaches ( une variable quantitative en fonction des modalité d'une variable qualitative )
+
+plot(origine_geo , taille, las=3 , main="Boxplot de la taille des plantes en fonction de l'origine geographique" , col='red' , ylab="Taille" ,xlab="Origines", notch=F)
+
+# Les boxplots montrent que certaines origines géographiques présentent une variabilité faible (boîtes très resserrées), alors que d’autres sont plus dispersées.
+#L’ajout d’de l'option (notch=TRUE) nous permet d’avoir une indication sur la comparaison des médianes.  Cela va faire apparaitre des encoches. Si les encoches ne se chevauchent pas, cela suggère des différences de médiane entre groupes. Il faut savoir que cette intérpretation est approximatice et n'équivaut pas a un test statistique.
+
+stripchart(taille~origine_geo , las=1)
+
+plot(taille,poids, col="red" , main = "Evolution du poids en fonction de la taille") 
+
+# Affichage de plusieurs graphiques dans la meme fenetre
+par(mfrow=c(2,2))  # 2 en lignes et 2 en colonnes par exemple 
+hist(taille,xlim=c(40,90),xlab="taille (cm)",ylab="effectif",freq=T,main="histogramme de la taille des plantes",col="orange")
+# xlim=c(x,y) sert a limiter les valuers affichées sur l'histogramme.
+boxplot(taille,main="Boxplot de la taille des plantes",ylab="taille")
+plot(taille~origine_geo,las=3)
+stripchart(taille~origine_geo,las=1)
+
+# detach(croissance). Important a utiliser lorsqu'on utilise attach pour travailler par exemple sur un autre jeu de données sans les mélanger.
+
+```
+
+## Fin du compte rendu. TDB TP1 M1
+
