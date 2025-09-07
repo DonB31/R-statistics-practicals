@@ -1,0 +1,66 @@
+---
+title: "Compte rendu TP2 - Régression linéaire, probabilités, intervalle de confiance"
+author: "Laroussi Labid Bachri, M1 BBS"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
+output:
+  html_document:
+    toc: TRUE
+    theme: 'flatly' 
+  pdf_document:
+    toc: TRUE
+editor_options: 
+  chunk_output_type: console
+params:
+  data_bacterias: "genomes"
+  fichier_bacteries: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/bacterial_genomes.txt"
+  separateur_bacterias: "\t"
+  
+  data_sequoia: "sequoia"
+  fichier_sequoia: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/sequoia.txt"
+  separateur_sequoia: "\n"
+  
+  data_tomate: "tomates"
+  fichier_tomates: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/tomates_cerises.txt"
+---
+
+# Régression linéaire
+
+Nous allons découvrir sur la regression linéaire en travaillant sur le génome d'une bacterie. 
+
+```{r}
+genomes = read.table(params$fichier_bacteries , params$separateur_bacterias , header = TRUE)
+
+attach(genomes)
+
+names(genomes)
+
+Genome_size
+
+ORF_number
+
+which(ORF_number<4000)
+
+plot(Genome_size , ORF_number , pch=16)
+```
+
+L'unité de mesure est de l'ordre des milions de paires de bases. 
+
+## On peut calculer la relation entre ces 2 variables mais aussi le coefficient de Pearson. 
+```{r}
+cov(Genome_size , ORF_number)
+
+round(cor(Genome_size , ORF_number),2)
+```
+
+On observe une valeur de covariance de 4005883 et un coefficient de correlation de Pearson de 0.96. On a une correlation positive. 
+
+## on va creer une fonction 
+
+# Calculs de probabilité
+
+A compléter
+
+# Estimer un intervalle de confiance (IC) d'un paramètre populationnel (µ, p,...) à partir d'un échantillon
+
+A compléter
+
