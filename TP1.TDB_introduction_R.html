@@ -369,7 +369,7 @@ display: none;
 
 <h1 class="title toc-ignore">Compte rendu - TP1 Initiation à R</h1>
 <h4 class="author">Laroussi Labid Bachri</h4>
-<h4 class="date">07-09-2025</h4>
+<h4 class="date">08-09-2025</h4>
 
 </div>
 
@@ -669,12 +669,12 @@ camembert_origine &lt;- function() {
 } # Ajout d&#39;autant de couleurs que des origines avec la fonction rainbow()</code></pre>
 <p>On peut écrire notre propre <strong>fonction</strong> pour appeler
 notre pie(…) et pas faire de “copier-coller”</p>
-<pre class="r"><code>png(&quot;camembert_origine.png&quot;)
+<pre class="r"><code>png(&quot;/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png&quot;)
 camembert_origine()
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
 ##                 2</code></pre>
-<pre class="r"><code>file.exists(&quot;camembert_origine.png&quot;) # On peut verifier si notre fichier existe.</code></pre>
+<pre class="r"><code>file.exists(&quot;/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png&quot;) # On peut verifier si notre fichier existe.</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>On peut verifier si notre fichier a bien été exporté. Cette option
 peut etres très utile lors de l’automatisation de l’exportation de nos
@@ -698,12 +698,12 @@ dossiers parents ( ceux qui sont avant ) même s’ils n’ont pas encore été
 crées. Exemple ” /Users/etudiant/Desktop/TP_TDB/figures_tp1 ”</p>
 <p>Avec l’option recursive = TRUE , le dossier figure_tp1 va être crée
 mais egalement le dossier TP_TDB même s’il existe pas.</p>
-<pre class="r"><code>jpeg(&quot;Barplot_origine_geo.jpeg&quot;)
+<pre class="r"><code>jpeg(&quot;/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg&quot;)
 barplot_origine_geo()
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
 ##                 2</code></pre>
-<pre class="r"><code>file.exists(&quot;Barplot_origine_geo.jpeg&quot;)</code></pre>
+<pre class="r"><code>file.exists(&quot;/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg&quot;)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code># On est sur une variable qualitative, on ne va parler de histogramme mais de diagramme en barres.</code></pre>
 <pre class="r"><code># Histogrammes (variable quantitative)

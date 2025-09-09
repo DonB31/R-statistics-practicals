@@ -239,11 +239,11 @@ camembert_origine <- function() {
 On peut écrire notre propre **fonction** pour appeler notre pie(…) et pas faire de "copier-coller"
 
 ```{r}
-png("camembert_origine.png")
+png("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png")
 camembert_origine()
 dev.off()
 
-file.exists("camembert_origine.png") # On peut verifier si notre fichier existe.
+file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png") # On peut verifier si notre fichier existe.
 ```
 
 On peut verifier si notre fichier a bien été exporté. Cette option peut etres très utile lors de l'automatisation de l'exportation de nos fichier png (camembert , boxplots, etc ) sans avoir a verifier visuellement un par un dans le dossier. Cette fonction renvoie une valeur logique "TRUE" ou "FALSE
@@ -266,11 +266,11 @@ Exemple
 Avec l'option recursive = TRUE , le dossier figure_tp1 va être crée mais egalement le dossier TP_TDB même s'il existe pas. 
 
 ```{r}
-jpeg("Barplot_origine_geo.jpeg")
+jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg")
 barplot_origine_geo()
 dev.off()
 
-file.exists("Barplot_origine_geo.jpeg")
+file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg")
 # On est sur une variable qualitative, on ne va parler de histogramme mais de diagramme en barres.
 ```
 

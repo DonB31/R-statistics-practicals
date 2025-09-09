@@ -19,8 +19,9 @@ params:
   fichier_sequoia: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/sequoia.txt"
   separateur_sequoia: "\n"
   
-  data_tomate: "tomates"
-  fichier_tomates: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/tomates_cerises.txt"
+  data_tomato: "tomatos"
+  fichier_tomatos: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/tomatos_cherry.txt"
+  separateur_tomatos: "\n"
 ---
 
 # Régression linéaire
@@ -28,7 +29,7 @@ params:
 Nous allons découvrir sur la regression linéaire en travaillant sur le génome d'une bacterie. 
 
 ```{r}
-genomes = read.table(params$fichier_bacteries , params$separateur_bacterias , header = TRUE)
+genomes = read.table(params$fichier_bacteries , sep = params$separateur_bacterias , header = TRUE)
 
 attach(genomes)
 
@@ -54,13 +55,222 @@ round(cor(Genome_size , ORF_number),2)
 
 On observe une valeur de covariance de 4005883 et un coefficient de correlation de Pearson de 0.96. On a une correlation positive. 
 
-## on va creer une fonction 
+## On va creer une fonction 
+```{r}
+ligneregression = lm(ORF_number ~ Genome_size)
+summary(ligneregression)
+```
+
+## Coefficients de la droite
+a = 0.8272
+b = 503.39
+
+```{r}
+cor(Genome_size , ORF_number)^2
+```
+
+## Ajout de la droite de regréssion 
+```{r}
+plot(Genome_size , ORF_number , pch=16)
+abline(ligneregression , col="red", lwd=2)
+
+detach (genomes)
+```
+
 
 # Calculs de probabilité
 
-A compléter
+## Nous allons maintenant travailler sur les calculs basés sur des données. L'analyse porte sur la taille des arbres sequoia. 
+
+```{r}
+data_sequoia = read.table(params$fichier_sequoia , sep = params$separateur_sequoia , header = TRUE)
+
+attach(data_sequoia)
+
+names(data_sequoia)
+
+hist(taille_arbre , main="Histogramme representant la taille des arbres Sequoia" , ylab='Frequence' , col='salmon' )
+
+histogramme_taille_arbre = function() { hist(taille_arbre , main="Histogramme representant la taille des arbres Sequoia" , ylab='Frequence' , xlab='Taille des arbres' ) }
+
+jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/histogramme_taille_arbres.jpg")
+histogramme_taille_arbre()
+dev.off()
+
+if ( file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/histogramme_taille_arbres.jpg")) {
+  cat("Le fichier a bien ete genérée. 
+      ") 
+  } # Utilisation de if pour envoyer un output qui confirme l'existence de notre fichier. 
+
+mean_taille_sequoia = mean(taille_arbre)
+ecart_type_sequoia = sd(taille_arbre)
+
+```
+
+## Quel est la probabilité qu'un arbre mesure 80 m ? 
+
+```{r}
+proba_arbre_80m = length(which(taille_arbre==80))/length(taille_arbre)
+
+cat("La probabilité qu'un arbre mesure 80m est de", proba_arbre_80m)
+
+```
+
+## Quel est la probabilité qu'un arbre mesure 100 m ? 
+
+```{r}
+proba_arbre_100m = length(taille_arbre[taille_arbre>100])/length(taille_arbre)
+
+cat("La probabilité qu'un arbre mesure 100m est de", proba_arbre_100m)
+
+```
+
+## Calcul basés sur une loi centrée réduite N(0,1)
+
+```{r}
+dnorm(0,0,1) # On a ici x=0, mean=0 et sd=1 respectivement. Ici , x est une variable aleatoire, mean correspond à la mean de la population et sd c'est l'ecart type de la popualtion. 
+
+hist(rnorm(100,0,1), col='red')
+
+```
+En augmentant n, on va tendre vers une figure de plus en plus symetrique centrée normale. 
+pnorm(0,0,1) 
+
+
+
+## lower.tail = F On peut l'utiliser pour trouver la valeur que la probabilité de la variable aleatoire normal soit inferieur ou superieure a q. lower.tail= TRUE pour valeurs inferieurs. Par défaut, lower.tail=TRUE 
+
+```{r}
+hist(rnorm(10000,0,1))
+
+```
+En augmentant n, on va tendre vers une figure de plus en plus symetrique centrée normale. 
+
+On va calculer la mean et écart type des tailles des séquoia pour calculer la probabilité qu'u arbre mesure 80m. 
+```{r}
+
+calcul_arbre80m = round(dnorm(80,mean_taille_sequoia , ecart_type_sequoia ) , 3)
+calcul_arbre80m
+calcul_arbre100m = round(pnorm(100,mean_taille_sequoia, ecart_type_sequoia, lower.tail = F),3)
+calcul_arbre100m
+
+```
+## Ici, il faut utiliser pnorm pour avoir la somme des probabilités des arbres qui font plus de 100m. Cumulative
+
+```{r,echo=FALSE}
+cat("La probabilité qu'un arbre fasse 80m selon la loi normal est de",calcul_arbre80m)
+
+cat("Le calcul des probabilités qu'un arbre mesure 100m ou plus est de", calcul_arbre100m,". Cette valeur est legerement differente que le calcul direct par nombre d'arbres de 100m divisé par le total.", proba_arbre_100m, "vs", calcul_arbre100m) 
+```
+
+Ces differences sont du à l'échantillonage donc on aura toujours une différence. 
+
+# Calculs basés sur une loi binomaile B(n,p)
+
+```{r}
+n=100
+p=0.8
+proba_80_graines_germent = dbinom(80,n,prob=p)
+proba_au_max80_graines_germent = pbinom(80,n,prob=p)
+proba_plus_de_80_graines_germent = pbinom(80,n,prob=p , lower.tail=F)
+cat("La probabilité que 80 graines germent est de" ,proba_80_graines_germent)
+```
+```{r, echo=FALSE}
+cat("La probabilité que au maximum 80 graines germent est de",proba_au_max80_graines_germent)
+cat("La probabilité que plus de 80 graines germent est de",proba_plus_de_80_graines_germent)
+```
+
+## Pour trouver combien de graines en mean devraient germer, on multiplie n par p (np)
+
+```{r}
+mean_graines_germes = n*p
+
+cat("D'apres notre n et p, on devrait s'attendre en mean a" , mean_graines_germes)
+
+k = seq(0,100,1)
+## Afficher figure 
+
+
+figure_loi_binomiale = function() { plot(dbinom(k,100,prob=0.8), xlab="k" , ylab="Prob(X=k)" , col="salmon", main="Loi Binomiale B(100,0.8)") }
+
+jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/figure_loi_binomiale.jpg" , width=1600, height=1200, res=200)
+figure_loi_binomiale()
+dev.off()
+
+if ( file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/figure_loi_binomiale.jpg")) {
+  cat("Le fichier a bien ete genérée. 
+      
+      ")
+  
+} # Utilisation de if pour envoyer un output qui confirme l'existence de notre fichier. 
+
+detach(data_sequoia)
+```
+
+On aura ici des points et pas une droite car la loi binomiale est une loi discrete et non continue. 
 
 # Estimer un intervalle de confiance (IC) d'un paramètre populationnel (µ, p,...) à partir d'un échantillon
 
-A compléter
+```{r}
 
+data_tomatos = read.table(params$fichier_tomatos , sep = params$separateur_tomatos , header=T)
+
+attach(data_tomatos)
+names(data_tomatos)
+
+mean_tomatos = mean(poids_tomate)
+sd_tomatos = sd(poids_tomate)
+n_tomatos = length(poids_tomate)
+```
+
+## Intervalle de confiance de la mean théorique µ de la popualtion, à partir de la mean m calculé sur un échantillon. 
+## Intervalle de confiance a 95% 
+```{r}
+error = qt(0.975, df=n-1)*sd_tomatos/sqrt(n_tomatos)
+left = mean_tomatos - error
+right = mean_tomatos + error
+left;right
+```
+
+```{r, echo=F}
+cat("L'intervalle de confiance a 95% sera compris entre", left , "et" , right, ". On peut estimer que la mean de la taille des tomatos de la population se trouve dans cette intervalle ave cun risque d'erreur de 5%. ")
+
+```
+
+On peut augmenter l'intervalle de confiance mais on aura des valeurs plus importantes. 
+
+```{r}
+error_99 = qt(0.995, df=n-1)*sd_tomatos/sqrt(n_tomatos)
+left_99_tomatos = mean_tomatos - error_99
+right_99_tomatos = mean_tomatos + error_99
+left_99_tomatos;right_99_tomatos
+```
+
+```{r, echo=F}
+cat("L'intervalle de confiance a 95% sera compris entre", left_99_tomatos , "et" , right_99_tomatos , ". On peut estimer que la mean de la taille des tomatos de la population se trouve dans cette intervalle ave cun risque d'erreur de 1%.")
+
+```
+
+Cet intervalle pourra etre plus petite en augmentant notre nombre de tomatos. 
+
+```{r}
+frequence_red_apples = 0.4 # fréquence de pommes rouges dans l'échantillon
+n = 125 # taille de l'échantillon
+
+error_red_apple = qnorm(0.975)*sqrt(frequence_red_apples*(1-frequence_red_apples)/n)
+
+left_apples = frequence_red_apples - error_red_apple
+right_apples = frequence_red_apples + error_red_apple
+left_apples;right_apples
+```
+
+```{r}
+cat("L'intervalle ayant 95% de chance d'obtenir la vrai proportion p de la popualtion est entre" , left_apples, "et",  right_apples)
+
+detach(data_tomatos)
+```
+
+
+## Sources utiles
+
+- [https://www.datamentor.io/r-programming/if-else-statement](https://www.datamentor.io/r-programming/if-else-statement) (if else/)
