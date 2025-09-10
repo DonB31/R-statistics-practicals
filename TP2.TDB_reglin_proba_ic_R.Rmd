@@ -11,151 +11,175 @@ output:
 editor_options: 
   chunk_output_type: console
 params:
+  
+  
   data_bacterias: "genomes"
   fichier_bacteries: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/bacterial_genomes.txt"
   separateur_bacterias: "\t"
-  
   data_sequoia: "sequoia"
   fichier_sequoia: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/sequoia.txt"
-  separateur_sequoia: "\n"
-  
+  separateur_sequoia: ""
   data_tomato: "tomatos"
   fichier_tomatos: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/tomatos_cherry.txt"
-  separateur_tomatos: "\n"
+  separateur_tomatos: ""
 ---
+
+
+Dans ce TP, nous allons etudier la regression linéaire, les calculs de probabilité, des calculs bases sur la loi binomiale et finalement les intervalles de confiance.
+
+Dans ce tp, on utilisera la libraire here pour la gestion des chemins relatifs. 
+```{r Chemins_fichiers, include=FALSE} 
+# On peut nommer les Chunk
+library(here)
+
+# creer un dossier ou stocker les figures si besoin
+dir.create(here("figure_tp2") , recursive = TRUE)
+```
+
+```{r Setup de notre Rmd , include=FALSE}
+knitr::opts_chunk$set(echo = TRUE , warning = FALSE , message = FALSE , 
+                      fig.width = 6, fig.height = 4 , dpi =150,
+                      fig.path = "figure_tp2/"
+                      )
+
+# Ici, nous allons etablir les options pour l'affichage du code, message d'erreur et le format des images) 
+```
 
 # Régression linéaire
 
-Nous allons découvrir sur la regression linéaire en travaillant sur le génome d'une bacterie. 
+## Nous allons découvrir sur la regression linéaire en travaillant sur le génome d'une bacterie. 
 
-```{r}
+```{r Regression_lineaire}
 genomes = read.table(params$fichier_bacteries , sep = params$separateur_bacterias , header = TRUE)
-
-attach(genomes)
-
 names(genomes)
+with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (pb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
 
-Genome_size
 
-ORF_number
+# L'unité de mesure est de l'ordre des milions de paires de bases. 
 
-which(ORF_number<4000)
+# On peut calculer la relation entre ces 2 variables mais aussi le coefficient de Pearson. 
 
-plot(Genome_size , ORF_number , pch=16)
-```
+cov_xy = with(genomes, cov(Genome_size , ORF_number))
+r_xy = with(genomes, cor(Genome_size , ORF_number))
+cat(sprintf("Covariance = %.0f ; r (Pearson) = %.2f\n", cov_xy, r_xy))
 
-L'unité de mesure est de l'ordre des milions de paires de bases. 
 
-## On peut calculer la relation entre ces 2 variables mais aussi le coefficient de Pearson. 
-```{r}
-cov(Genome_size , ORF_number)
+#On observe une valeur de covariance de 4005883 et un coefficient de correlation de Pearson de 0.96. On a une correlation positive. 
 
-round(cor(Genome_size , ORF_number),2)
-```
 
-On observe une valeur de covariance de 4005883 et un coefficient de correlation de Pearson de 0.96. On a une correlation positive. 
+ligneregression= lm(ORF_number~Genome_size, data = genomes) # Nous n'avons utilisé pas attach donc faut lui preciser sur quoi on travaille.
 
-## On va creer une fonction 
-```{r}
-ligneregression = lm(ORF_number ~ Genome_size)
-summary(ligneregression)
-```
 
-## Coefficients de la droite
-a = 0.8272
-b = 503.39
 
-```{r}
-cor(Genome_size , ORF_number)^2
-```
+# Ajout de la droite de regréssion 
 
-## Ajout de la droite de regréssion 
-```{r}
-plot(Genome_size , ORF_number , pch=16)
+relation_Genome_size_nb_ORF = with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (pb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
 abline(ligneregression , col="red", lwd=2)
 
-detach (genomes)
+summary(ligneregression)
+
+relation_Genome_size_nb_ORF = function() { 
+with(genomes , {plot(Genome_size , ORF_number , pch=16 ,
+                    ylab="Nombre d'ORF" ,
+                    xlab = "Taille du génome (pb)" ,
+                    main="Relation de la taille des genomes avec le nombre d'ORF. " ) 
+abline(ligneregression , col="red", lwd=2) 
+})
+  }
+
+relation_Genome_size_nb_ORF()
+
+outfile_bacterias = here("figure_tp2" , "relation_Genome_size_nb_ORF.jpg")
+jpeg(outfile_bacterias)
+relation_Genome_size_nb_ORF()
+dev.off()
+
 ```
 
+
+## Coefficients de la droite
+Les coefficients de la droite de régression seront a = 0.8272, b = 503.39. On peut donc en deduire l'équation y = 0.8272x + 503.39 
+
+La droite de régression est en outil très intéressant pour la prediction et pouvoir estimer des valeurs en lisant direcement sur la figure. 
 
 # Calculs de probabilité
 
 ## Nous allons maintenant travailler sur les calculs basés sur des données. L'analyse porte sur la taille des arbres sequoia. 
 
-```{r}
+```{r Calcul_probabilite}
 data_sequoia = read.table(params$fichier_sequoia , sep = params$separateur_sequoia , header = TRUE)
-
-attach(data_sequoia)
 
 names(data_sequoia)
 
-hist(taille_arbre , main="Histogramme representant la taille des arbres Sequoia" , ylab='Frequence' , col='salmon' )
+hist(data_sequoia$taille_arbre,
+     main="Histogramme representant la taille des arbres Sequoia",
+     ylab='Frequence',
+     col='salmon' )
+mean_taille_sequoia = mean(data_sequoia$taille_arbre)
+ecart_type_sequoia = sd(data_sequoia$taille_arbre)
 
-histogramme_taille_arbre = function() { hist(taille_arbre , main="Histogramme representant la taille des arbres Sequoia" , ylab='Frequence' , xlab='Taille des arbres' ) }
+cat("La taille moyenne est de" , mean_taille_sequoia , " et l'écart-type est" , ecart_type_sequoia
+    )
 
-jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/histogramme_taille_arbres.jpg")
+histogramme_taille_arbre = function() { hist(data_sequoia$taille_arbre , main="Histogramme representant la taille des arbres Sequoia" , ylab='Frequence' , xlab='Taille des arbres' ) }
+
+histogramme_taille_arbre()
+
+outfile_seq = here("figure_tp2" , "histogramme_taille_arbre.jpg")
+jpeg(outfile_seq)
 histogramme_taille_arbre()
 dev.off()
 
-if ( file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/histogramme_taille_arbres.jpg")) {
+if ( file.exists(outfile_seq)) {
   cat("Le fichier a bien ete genérée. 
-      ") 
+      " , outfile_seq ) 
   } # Utilisation de if pour envoyer un output qui confirme l'existence de notre fichier. 
 
-mean_taille_sequoia = mean(taille_arbre)
-ecart_type_sequoia = sd(taille_arbre)
 
-```
 
 ## Quel est la probabilité qu'un arbre mesure 80 m ? 
 
-```{r}
-proba_arbre_80m = length(which(taille_arbre==80))/length(taille_arbre)
+
+proba_arbre_80m = length(which(data_sequoia$taille_arbre==80))/length(data_sequoia$taille_arbre)
 
 cat("La probabilité qu'un arbre mesure 80m est de", proba_arbre_80m)
 
-```
+
 
 ## Quel est la probabilité qu'un arbre mesure 100 m ? 
 
-```{r}
-proba_arbre_100m = length(taille_arbre[taille_arbre>100])/length(taille_arbre)
+
+proba_arbre_100m = length(data_sequoia$taille_arbre[data_sequoia$taille_arbre>100])/length(data_sequoia$taille_arbre)
 
 cat("La probabilité qu'un arbre mesure 100m est de", proba_arbre_100m)
 
-```
+
 
 ## Calcul basés sur une loi centrée réduite N(0,1)
 
-```{r}
+
 dnorm(0,0,1) # On a ici x=0, mean=0 et sd=1 respectivement. Ici , x est une variable aleatoire, mean correspond à la mean de la population et sd c'est l'ecart type de la popualtion. 
 
 hist(rnorm(100,0,1), col='red')
 
-```
-En augmentant n, on va tendre vers une figure de plus en plus symetrique centrée normale. 
+
+# En augmentant n, on va tendre vers une figure de plus en plus symetrique centrée normale. 
 pnorm(0,0,1) 
 
-
-
-## lower.tail = F On peut l'utiliser pour trouver la valeur que la probabilité de la variable aleatoire normal soit inferieur ou superieure a q. lower.tail= TRUE pour valeurs inferieurs. Par défaut, lower.tail=TRUE 
-
-```{r}
 hist(rnorm(10000,0,1))
 
-```
-En augmentant n, on va tendre vers une figure de plus en plus symetrique centrée normale. 
 
-On va calculer la mean et écart type des tailles des séquoia pour calculer la probabilité qu'u arbre mesure 80m. 
-```{r}
+# On va calculer la mean et écart type des tailles des séquoia pour calculer la probabilité qu'u arbre mesure 80m. 
+
 
 calcul_arbre80m = round(dnorm(80,mean_taille_sequoia , ecart_type_sequoia ) , 3)
 calcul_arbre80m
-calcul_arbre100m = round(pnorm(100,mean_taille_sequoia, ecart_type_sequoia, lower.tail = F),3)
+calcul_arbre100m = round(pnorm(100,mean_taille_sequoia, ecart_type_sequoia, lower.tail = FALSE),3)
 calcul_arbre100m
-
 ```
-## Ici, il faut utiliser pnorm pour avoir la somme des probabilités des arbres qui font plus de 100m. Cumulative
+L'option lower.tail = F est utilisé pour trouver la valeur que la probabilité de la variable aleatoire normal soit inferieur ou superieure a q. lower.tail= TRUE pour valeurs inferieurs. Par défaut, lower.tail=TRUE 
+
+Ici, il faut utiliser pnorm pour avoir la somme des probabilités des arbres qui font plus de 100m. Cumulative. 
 
 ```{r,echo=FALSE}
 cat("La probabilité qu'un arbre fasse 80m selon la loi normal est de",calcul_arbre80m)
@@ -167,7 +191,7 @@ Ces differences sont du à l'échantillonage donc on aura toujours une différen
 
 # Calculs basés sur une loi binomaile B(n,p)
 
-```{r}
+```{r Loi_Binomiale}
 n=100
 p=0.8
 proba_80_graines_germent = dbinom(80,n,prob=p)
@@ -178,11 +202,11 @@ cat("La probabilité que 80 graines germent est de" ,proba_80_graines_germent)
 ```{r, echo=FALSE}
 cat("La probabilité que au maximum 80 graines germent est de",proba_au_max80_graines_germent)
 cat("La probabilité que plus de 80 graines germent est de",proba_plus_de_80_graines_germent)
-```
 
-## Pour trouver combien de graines en mean devraient germer, on multiplie n par p (np)
 
-```{r}
+# Pour trouver combien de graines en mean devraient germer, on multiplie n par p (np)
+
+
 mean_graines_germes = n*p
 
 cat("D'apres notre n et p, on devrait s'attendre en mean a" , mean_graines_germes)
@@ -190,42 +214,36 @@ cat("D'apres notre n et p, on devrait s'attendre en mean a" , mean_graines_germe
 k = seq(0,100,1)
 ## Afficher figure 
 
+figure_loi_binomiale = function() { plot(dbinom(k,100,prob=0.8), xlab="k" , ylab="Prob(X=k)" , col="red", main="Loi Binomiale B(100,0.8)") }
 
-figure_loi_binomiale = function() { plot(dbinom(k,100,prob=0.8), xlab="k" , ylab="Prob(X=k)" , col="salmon", main="Loi Binomiale B(100,0.8)") }
-
-jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/figure_loi_binomiale.jpg" , width=1600, height=1200, res=200)
+figure_loi_binomiale()
+outfile = here("figure_tp2" , "figure_loi_binomiale.jpg")
+jpeg(outfile)
 figure_loi_binomiale()
 dev.off()
 
-if ( file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp2/figure_loi_binomiale.jpg")) {
-  cat("Le fichier a bien ete genérée. 
-      
-      ")
-  
-} # Utilisation de if pour envoyer un output qui confirme l'existence de notre fichier. 
-
-detach(data_sequoia)
+if ( file.exists(outfile)) {
+  cat("Le fichier a bien ete genérée. " , outfile) } 
+# Utilisation de if pour envoyer un output qui confirme l'existence de notre fichier. 
 ```
 
 On aura ici des points et pas une droite car la loi binomiale est une loi discrete et non continue. 
 
 # Estimer un intervalle de confiance (IC) d'un paramètre populationnel (µ, p,...) à partir d'un échantillon
 
-```{r}
+```{r Intervalle_de_confiance}
 
 data_tomatos = read.table(params$fichier_tomatos , sep = params$separateur_tomatos , header=T)
-
-attach(data_tomatos)
 names(data_tomatos)
 
-mean_tomatos = mean(poids_tomate)
-sd_tomatos = sd(poids_tomate)
-n_tomatos = length(poids_tomate)
-```
+mean_tomatos = mean(data_tomatos$poids_tomate)
+sd_tomatos = sd(data_tomatos$poids_tomate)
+n_tomatos = length(data_tomatos$poids_tomate)
 
-## Intervalle de confiance de la mean théorique µ de la popualtion, à partir de la mean m calculé sur un échantillon. 
-## Intervalle de confiance a 95% 
-```{r}
+
+# Intervalle de confiance de la mean théorique µ de la popualtion, à partir de la mean m calculé sur un échantillon. 
+# Intervalle de confiance a 95% 
+
 error = qt(0.975, df=n-1)*sd_tomatos/sqrt(n_tomatos)
 left = mean_tomatos - error
 right = mean_tomatos + error
@@ -262,15 +280,15 @@ error_red_apple = qnorm(0.975)*sqrt(frequence_red_apples*(1-frequence_red_apples
 left_apples = frequence_red_apples - error_red_apple
 right_apples = frequence_red_apples + error_red_apple
 left_apples;right_apples
-```
-
-```{r}
 cat("L'intervalle ayant 95% de chance d'obtenir la vrai proportion p de la popualtion est entre" , left_apples, "et",  right_apples)
 
-detach(data_tomatos)
+
 ```
 
 
 ## Sources utiles
 
 - [https://www.datamentor.io/r-programming/if-else-statement](https://www.datamentor.io/r-programming/if-else-statement) (if else/)
+- [https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/sprintf) (sprintf)
+- [https://stat.ethz.ch/R-manual/R-devel/library/base/html/sprintf.html] (https://stat.ethz.ch/R-manual/R-devel/library/base/html/sprintf.html) (sprintf)
+- [https://yihui.org/knitr/options/](https://yihui.org/knitr/options/) (Options knitr)
