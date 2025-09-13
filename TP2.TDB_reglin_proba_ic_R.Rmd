@@ -52,7 +52,7 @@ knitr::opts_chunk$set(echo = TRUE , warning = FALSE , message = FALSE ,
 ```{r Regression_lineaire}
 genomes = read.table(params$fichier_bacteries , sep = params$separateur_bacterias , header = TRUE)
 names(genomes)
-with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (pb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
+with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (Mpb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
 
 
 # L'unité de mesure est de l'ordre des milions de paires de bases. 
@@ -73,7 +73,7 @@ ligneregression= lm(ORF_number~Genome_size, data = genomes) # Nous n'avons utili
 
 # Ajout de la droite de regréssion 
 
-relation_Genome_size_nb_ORF = with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (pb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
+relation_Genome_size_nb_ORF = with(genomes , plot(Genome_size , ORF_number , pch=16 , ylab="Nombre d'ORF" , xlab = "Taille du génome (Mpb)" , main="Relation de la taille des genomes avec le nombre d'ORF. " ))
 abline(ligneregression , col="red", lwd=2)
 
 summary(ligneregression)
@@ -244,7 +244,7 @@ n_tomatos = length(data_tomatos$poids_tomate)
 # Intervalle de confiance de la mean théorique µ de la popualtion, à partir de la mean m calculé sur un échantillon. 
 # Intervalle de confiance a 95% 
 
-error = qt(0.975, df=n-1)*sd_tomatos/sqrt(n_tomatos)
+error = qt(0.975, df=n_tomatos-1)*sd_tomatos/sqrt(n_tomatos)
 left = mean_tomatos - error
 right = mean_tomatos + error
 left;right
@@ -258,7 +258,7 @@ cat("L'intervalle de confiance a 95% sera compris entre", left , "et" , right, "
 On peut augmenter l'intervalle de confiance mais on aura des valeurs plus importantes. 
 
 ```{r}
-error_99 = qt(0.995, df=n-1)*sd_tomatos/sqrt(n_tomatos)
+error_99 = qt(0.995, df=n_tomatos-1)*sd_tomatos/sqrt(n_tomatos)
 left_99_tomatos = mean_tomatos - error_99
 right_99_tomatos = mean_tomatos + error_99
 left_99_tomatos;right_99_tomatos
