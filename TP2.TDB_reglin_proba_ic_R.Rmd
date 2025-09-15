@@ -3,11 +3,11 @@ title: "Compte rendu TP2 - Régression linéaire, probabilités, intervalle de c
 author: "Laroussi Labid Bachri, M1 BBS"
 date: "`r format(Sys.Date(), '%d-%m-%Y')`"
 output:
+  pdf_document:
+    toc: TRUE
   html_document:
     toc: TRUE
     theme: 'flatly' 
-  pdf_document:
-    toc: TRUE
 editor_options: 
   chunk_output_type: console
 params:
@@ -81,7 +81,7 @@ summary(ligneregression)
 relation_Genome_size_nb_ORF = function() { 
 with(genomes , {plot(Genome_size , ORF_number , pch=16 ,
                     ylab="Nombre d'ORF" ,
-                    xlab = "Taille du génome (pb)" ,
+                    xlab = "Taille du génome (Mpb)" ,
                     main="Relation de la taille des genomes avec le nombre d'ORF. " ) 
 abline(ligneregression , col="red", lwd=2) 
 })
@@ -100,7 +100,9 @@ dev.off()
 ## Coefficients de la droite
 Les coefficients de la droite de régression seront a = 0.8272, b = 503.39. On peut donc en deduire l'équation y = 0.8272x + 503.39 
 
-La droite de régression est en outil très intéressant pour la prediction et pouvoir estimer des valeurs en lisant direcement sur la figure. 
+La droite de régression est en outil très intéressant pour la prediction et pouvoir estimer des valeurs en lisant direcement sur la figure.
+
+
 
 # Calculs de probabilité
 

@@ -1,0 +1,29 @@
+---
+title: "Compte rendu TP3 - tests statistiques"
+author: "Mettre son nom et prénom et son groupe"
+date: "Mettre ici la date du jour"
+output: 
+   html_document: 
+      toc: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tests de Chi2
+
+## Tests de Chi2 de conformité 
+
+A compléter
+
+## Tests de Chi2 d'indépendance
+
+A compléter
+
+# Tests paramétriques d'adéquation et tests d'homogénéité (sur une variable quantitative)
+
+A compléter
+
+# Test non paramétriques d'homogénéité (sur une variable quantitative)
+
+A compléter
+
