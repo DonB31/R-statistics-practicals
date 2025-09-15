@@ -1,0 +1,55 @@
+---
+title: "Compte rendu TP3 - Tests Statistiques"
+author: "Laroussi Labid Bachri, M1 BBS"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
+output: 
+   html_document: 
+      toc: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tests de Chi2
+
+## Tests de Chi2 de conformité 
+
+```{r Test_de_Chi2_de_conformité}
+freq_exp = c(1/4,1/2,1/4) # fréquences relatives théoriques F2 $
+
+freq_obs = c(22,53,25) # fréquences observées écrits sous forme réelle. 
+
+chisq.test(freq_obs, p=freq_exp) ## Valeur de la stat de Chi2 , degré de liberté est la p-value. 
+
+```
+Question : les proportions observées sont-elles conformes aux proportions mendéliennes? 
+
+H0 les données observées sont conformes aux données théoriques. 
+- L'hypothese nulle de ce test est que les frequences observées et les fréquences théoriques sont differentes. 
+- La valeur de p-value est de 0.7634 qui est bien supérieure a seuil alpha 0.05 donc on ne rejette pas H0. 
+P value: probabilité de rejetter H0 a tort. Risque alpha. 
+
+
+**Conclusion : Les frequences observées sont conformes a la Loi de Mendel ( fréquences attendues)**
+
+## Tests de Chi2 d'indépendance
+
+Notre exemple : la résistance ou sensibilité à un pathogène est-elle indépendante de l'écotype d'Arabidopsis thaliana ? Autrement dit y a-t-il indépendance entre phénotype et écotype ?
+
+```{r Test_Chi2_d'independance}
+#Tableau de contingence 
+mat = matrix( c( 15,5,3,0,19,16), nrow=2 ,ncol=3, byrow = T, dimnames = list(c("R","S"), c("Col","Ws","Can")))
+mat
+
+chisq.test(mat, correct = F)
+
+```
+
+
+# Tests paramétriques d'adéquation et tests d'homogénéité (sur une variable quantitative)
+
+A compléter
+
+# Test non paramétriques d'homogénéité (sur une variable quantitative)
+
+A compléter
+
