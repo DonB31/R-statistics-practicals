@@ -2,9 +2,12 @@
 title: "Compte rendu TP3 - Tests Statistiques"
 author: "Laroussi Labid Bachri, M1 BBS"
 date: "`r format(Sys.Date(), '%d-%m-%Y')`"
-output: 
-   html_document: 
-      toc: TRUE
+output:
+  html_document:
+    toc: TRUE
+  pdf_document:
+    toc: TRUE
+    theme: 'flatly' 
 editor_options: 
   chunk_output_type: console
 ---
@@ -13,7 +16,7 @@ editor_options:
 
 ## Tests de Chi2 de conformité 
 
-```{r Test_de_Chi2_de_conformité}
+```{r Test_de_Chi2_de_conformité }
 freq_exp = c(1/4,1/2,1/4) # fréquences relatives théoriques F2 $
 
 freq_obs = c(22,53,25) # fréquences observées écrits sous forme réelle. 
@@ -35,21 +38,144 @@ P value: probabilité de rejetter H0 a tort. Risque alpha.
 
 Notre exemple : la résistance ou sensibilité à un pathogène est-elle indépendante de l'écotype d'Arabidopsis thaliana ? Autrement dit y a-t-il indépendance entre phénotype et écotype ?
 
-```{r Test_Chi2_d'independance}
+```{r Test_Chi2_dindependance}
 #Tableau de contingence 
 mat = matrix( c( 15,5,3,0,19,16), nrow=2 ,ncol=3, byrow = T, dimnames = list(c("R","S"), c("Col","Ws","Can")))
 mat
 
-chisq.test(mat, correct = F)
-
+chisq.test(mat, correct = F) # Correct: correction des effectifs lorsqu'ils sont trop faibles ( pas important )
 ```
 
+On fait un premier calcule d'effectif théorique. 
+```{r Calcul_dun_effectif_théorique}
+# (15 + 0) x 23 / total 
+
+effectif_théorique_COL_R = 15*23/58
+round(effectif_théorique_COL_R)
+
+```
+Ensemble de R et Col plus somme des R divisé par total. 
+H0: la résistance à un pathogene est independante de l'ecotype 
+H1 : La résistance depend de l'ecotype. 
+
+X = 30.901 très loin de 0 donc p value très petite. 
+On rejette H0 et accepte hypothese alternative. 
+Il y'a une dependance entre les variables. 
+
+Le degre de liberté, 3 genotypes avec des fréquences. On enleve un car si on est sur des frequences la somme est de 100%. Il suffit d'en connaitre 2 pour deduire l'autre 
+
+S'il y a une relation entre phénotype et écotype, comment se traduit-elle ?
+
+```{r}
+obs=chisq.test(mat, correct =F)$observed
+exp=chisq.test(mat, correct =F)$expected
+obs-exp
+```
+
+On compare nos tableau des effectifs observées à nos effectifs théoriques grace au $. 
+
+Si difference positive : exces d'effectifs , col resisteent , ws S et Can s. 
+si negatif : deficit d'effectifs 
+
+**Conclusion :** La resistance est dépendante de l'ecotype mais particuliermeent pour l'ecotype Col. 
 
 # Tests paramétriques d'adéquation et tests d'homogénéité (sur une variable quantitative)
 
-A compléter
+Dans cet exercice, nous allons chercher à comparer les valeurs d'une variable quantitative mesurée dans 2 échantillons 1 et 2, à l'aide d'un test de Student de comparaison de moyennes de 2 échantillons. La question posée est : la taille moyenne (à un temps de donné) de plantules d' A. thaliana de génotype "sauvage" (Col_0) et d'un mutant pour le gène X1 (Mut_X1) est-elle la même (hypothèse H0) ?
+
+```{r Test_parametriques_et_adequation}
+# Vecteurs des tailles des plantes
+Col_0=c(4.30,4.25,3.50,3.35,4.30,3.75,3.55,4.10,3.95,4.55,4.25,3.75,3.85,4.15,3.55,4.75,3.95,3.65)
+Mut_X1=c(3.06,4.05,3.95,3.40,3.80,3.95,3.65,4,3.85,3.95,3.65,3.75,3.4)
+
+```
+
+```{r, echo=F}
+# Valeurs moyennes
+taille_moyenne_wild = mean(Col_0)
+taille_moyenne_mutant = mean(Mut_X1)
+
+hist(Col_0 , col="darkgreen", xlim=c(0,5), ylim=c(0,5))
+hist(Mut_X1 , col = rgb(1, 0, 0, 0.5) ,add=T)
+cat("La taille moyenne des plantes wild est de",taille_moyenne_wild, "et la taille des plantes mutants est de", taille_moyenne_mutant)
+```
+
+On peut les representer par des histogrammes. 
+```{r}
+# Représentation graphique des données
+boxplot(Col_0,Mut_X1,names=c("Col_0","Mut_X1"),col=c("white","darkgreen"),ylab="taille (cm)")
+abline(h=mean(Col_0),col="black",lty=3,lwd=2)
+abline(h=mean(Mut_X1),col="green",lty=3,lwd=2)
+legend("topright", legend = c("Mut_X1","Col_0" ), text.col = c("darkgreen","black"))
+```
+
+Mais aussi avec des boxplots. 
+On observe une plus grande dispersion chez les groupe Col_0
+
+
+# Test d'adéquation à la loi normale (H0 = "les données suivent la loi Normale")
+
+```{r}
+shapiro.test(Col_0)
+shapiro.test(Mut_X1)
+```
+
+```{r, Test_Fischer}
+var.test(Col_0, Mut_X1)
+
+```
+Les 2 series suivent une loi normal car les 2 p value sont superieures à 0.05 donc on accepte H0. 
+
+Rapport de variance superieur à 1. Donc une des 2 varainces est 2 fois plus forte que l'autre. 
+
+rmq : cela dépend de l'échantillon et du degré de liberté. 
+On a une p-value de 0.3234 donc on accepte H0. 
+
+On peut passer au test de comapraison des moyennes. 
+# Test d'homogénéité (de comparaison) des moyennes (H0 = "les moyennes sont égales")
+```{r}
+t.test(Col_0,Mut_X1,var.equal = T)
+
+t.test(Col_0,Mut_X1,var.equal = T, alternative = "greater")
+t.test(Col_0,Mut_X1,var.equal = T, alternative = "less")
+```
+
+La p-value est supérieure a 0.05 donc on ne rejette pas l'hypothese nulle. 
+Les moyennes ne presentent pas de difference significative 
+
+avec greater , on voit uqe la p value est inferieure a 0.05 donc la moyenne de Col_0 est superieure a la moyenne de Mut_X1. 
+
+Les hypothese alternatives on peut chosiir qu'elle soit unilatérale ou bilatérale. 
+
+Conclusion biologique : le gene pourrait avoir un imapct sur la croisance et donc le mutant on reduit la taille des plantes. 
+Autre hypothese : Germination plus tardive car gene muté. 
 
 # Test non paramétriques d'homogénéité (sur une variable quantitative)
 
-A compléter
+```{r}
+non_infected=c(0.021,0.15,0.023,0.03,0.022,0.05,0.035,0.1,0.03)
+infected=c(1.22,1.12,1.06,1.04,0.86,1.24,1.96,0.9,2.5)
+mean(non_infected)
+mean(infected)
+```
+
+## Test d'adéquation à la loi normale
+**Test de Shapiro**
+```{r}
+shapiro.test(infected)
+shapiro.test(non_infected)
+```
+
+On rejette l'hypothese nulle. Les distributions ne suivent pas une loi normale. 
+**Test de Mann & Whitney (équivalent non paramétrique du test de Student)**
+```{r}
+wilcox.test(infected,non_infected)                        # bilatéral
+wilcox.test(infected,non_infected,alternative="greater")  # unilatéral
+```
+
+Le wilcow test montre que le gene est surexprimé quand il y a une infection. 
+La statistique est noté W
+
+Warning message car on a des ex-aquos 
+l'expression du gene est significativementinduite surexprimée ou les plantes sont infectées. mécanisme de déf. 
 
