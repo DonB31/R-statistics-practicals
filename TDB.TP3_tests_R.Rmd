@@ -32,14 +32,8 @@ chisq.test(freq_obs, p=freq_exp) ## Valeur de la stat de Chi2 , degré de libert
 **Question** : les proportions observées sont-elles conformes aux proportions mendéliennes? 
 
 H0 les données observées sont conformes aux données théoriques. 
-- L'hypothese nulle de ce test est que les frequences observées et les fréquences théoriques sont differentes. 
-- La valeur de p-value est de 0.7634 qui est bien supérieure a seuil alpha 0.05 donc on ne rejette pas H0. 
-P value: probabilité de rejetter H0 a tort. Risque alpha. 
-
-- H0 : les fréquences observées sont conformes aux proportions mendéliennes.
+- L'hypothese nulle de ce test est que les frequences observées et les fréquences théoriques sont égales.  
 - Résultat : p-value ≈ 0.76 > 0.05 → on ne rejette pas H0.
-
-Conclusion. Les données sont compatibles avec la loi de Mendel.
 
 **Conclusion : Les frequences observées sont conformes a la Loi de Mendel ( fréquences attendues)**
 
@@ -144,12 +138,14 @@ shapiro.test(Mut_X1)
 ```
 
 Normalité : p-value > 0.05 → pas de rejet → données normales.
-Variances : p-value = 0.32 > 0.05 → homogénéité supposée.
+
 
 ```{r, Test_Fischer}
-var.test(Col_0, Mut_X1)
+var.test(Col_0, Mut_X1) # On teste l'homogénéité de la variance. 
 
 ```
+Variances : p-value = 0.32 > 0.05 → homogénéité supposée.
+
 Les 2 series suivent une loi normal car les 2 p value sont superieures à 0.05 donc on accepte H0. 
 
 Rapport de variance superieur à 1. Donc une des 2 varainces est 2 fois plus forte que l'autre. 
@@ -169,17 +165,10 @@ t.test(Col_0,Mut_X1,var.equal = T, alternative = "less")
 Bilatéral : p-value > 0.05 → pas de différence significative.
 Unilatéral (Col > Mut) : p-value < 0.05 → Col significativement plus grand.
 
-Conclusion. La tendance suggère que la mutation pourrait réduire la croissance, mais la significativité dépend du type de test choisi (bilatéral vs unilatéral).
+**Conclusion.** La tendance suggère que la mutation pourrait réduire la croissance, mais la significativité dépend du type de test choisi (bilatéral vs unilatéral).
 
-La p-value est supérieure a 0.05 donc on ne rejette pas l'hypothese nulle. 
-Les moyennes ne presentent pas de difference significative 
+Les hypothese alternatives on peut chosiir qu'elle soit unilatérale ou bilatérale. Mais ce choix doit être fait a priori et pas a posteriori. 
 
-Avec greater , on voit que la p value est inferieure a 0.05 donc la moyenne de Col_0 est superieure a la moyenne de Mut_X1. 
-
-Les hypothese alternatives on peut chosiir qu'elle soit unilatérale ou bilatérale. 
-
-Conclusion biologique : le gene pourrait avoir un imapct sur la croisance et donc le mutant on reduit la taille des plantes. 
-Autre hypothese : Germination plus tardive car gene muté. 
 
 # Test non paramétriques d'homogénéité (sur une variable quantitative)
 
@@ -204,17 +193,16 @@ wilcox.test(infected,non_infected)                        # bilatéral
 wilcox.test(infected,non_infected,alternative="greater")  # unilatéral
 ```
 
-Le wilcow test montre que le gene est surexprimé quand il y a une infection. 
-La statistique est noté W. 
 
 Normalité : non respectée (p-value < 0.05).
 Mann–Whitney : p-value très faible → rejet de H0.
 
-Conclusion. Le gène est significativement plus exprimé chez les plantes infectées.
+**Conclusion**. Le gène est significativement plus exprimé chez les plantes infectées.
+
 
 ```{r include=FALSE}
 
 #Warning message car on a des ex-aquos 
-#L'expression du gene est significativementinduite surexprimée ou les plantes sont infectées. mécanisme de déf. 
+#L'expression du gene est significativement  surexprimée ou les plantes sont infectées. Mécanisme de déf. 
 ```
 

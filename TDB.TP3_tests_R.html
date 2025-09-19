@@ -351,7 +351,7 @@ display: none;
 
 <h1 class="title toc-ignore">Compte rendu TP3 - Tests Statistiques</h1>
 <h4 class="author">Laroussi Labid Bachri, M1 BBS</h4>
-<h4 class="date">18-09-2025</h4>
+<h4 class="date">19-09-2025</h4>
 
 </div>
 
@@ -413,15 +413,8 @@ chisq.test(freq_obs, p=freq_exp) ## Valeur de la stat de Chi2 , degré de libert
 conformes aux proportions mendéliennes?</p>
 <p>H0 les données observées sont conformes aux données théoriques. -
 L’hypothese nulle de ce test est que les frequences observées et les
-fréquences théoriques sont differentes. - La valeur de p-value est de
-0.7634 qui est bien supérieure a seuil alpha 0.05 donc on ne rejette pas
-H0. P value: probabilité de rejetter H0 a tort. Risque alpha.</p>
-<ul>
-<li>H0 : les fréquences observées sont conformes aux proportions
-mendéliennes.</li>
-<li>Résultat : p-value ≈ 0.76 &gt; 0.05 → on ne rejette pas H0.</li>
-</ul>
-<p>Conclusion. Les données sont compatibles avec la loi de Mendel.</p>
+fréquences théoriques sont égales.<br />
+- Résultat : p-value ≈ 0.76 &gt; 0.05 → on ne rejette pas H0.</p>
 <p><strong>Conclusion : Les frequences observées sont conformes a la Loi
 de Mendel ( fréquences attendues)</strong></p>
 </div>
@@ -529,9 +522,8 @@ Normale”)</h2>
 ## 
 ## data:  Mut_X1
 ## W = 0.88924, p-value = 0.09525</code></pre>
-<p>Normalité : p-value &gt; 0.05 → pas de rejet → données normales.
-Variances : p-value = 0.32 &gt; 0.05 → homogénéité supposée.</p>
-<pre class="r"><code>var.test(Col_0, Mut_X1)</code></pre>
+<p>Normalité : p-value &gt; 0.05 → pas de rejet → données normales.</p>
+<pre class="r"><code>var.test(Col_0, Mut_X1) # On teste l&#39;homogénéité de la variance. </code></pre>
 <pre><code>## 
 ##  F test to compare two variances
 ## 
@@ -543,6 +535,7 @@ Variances : p-value = 0.32 &gt; 0.05 → homogénéité supposée.</p>
 ## sample estimates:
 ## ratio of variances 
 ##           1.759191</code></pre>
+<p>Variances : p-value = 0.32 &gt; 0.05 → homogénéité supposée.</p>
 <p>Les 2 series suivent une loi normal car les 2 p value sont
 superieures à 0.05 donc on accepte H0.</p>
 <p>Rapport de variance superieur à 1. Donc une des 2 varainces est 2
@@ -591,18 +584,12 @@ d’homogénéité (de comparaison) des moyennes (H0 = “les moyennes sont
 <p>Bilatéral : p-value &gt; 0.05 → pas de différence significative.
 Unilatéral (Col &gt; Mut) : p-value &lt; 0.05 → Col significativement
 plus grand.</p>
-<p>Conclusion. La tendance suggère que la mutation pourrait réduire la
-croissance, mais la significativité dépend du type de test choisi
-(bilatéral vs unilatéral).</p>
-<p>La p-value est supérieure a 0.05 donc on ne rejette pas l’hypothese
-nulle. Les moyennes ne presentent pas de difference significative</p>
-<p>Avec greater , on voit que la p value est inferieure a 0.05 donc la
-moyenne de Col_0 est superieure a la moyenne de Mut_X1.</p>
+<p><strong>Conclusion.</strong> La tendance suggère que la mutation
+pourrait réduire la croissance, mais la significativité dépend du type
+de test choisi (bilatéral vs unilatéral).</p>
 <p>Les hypothese alternatives on peut chosiir qu’elle soit unilatérale
-ou bilatérale.</p>
-<p>Conclusion biologique : le gene pourrait avoir un imapct sur la
-croisance et donc le mutant on reduit la taille des plantes. Autre
-hypothese : Germination plus tardive car gene muté.</p>
+ou bilatérale. Mais ce choix doit être fait a priori et pas a
+posteriori.</p>
 </div>
 </div>
 <div id="test-non-paramétriques-dhomogénéité-sur-une-variable-quantitative" class="section level1">
@@ -650,12 +637,10 @@ paramétrique du test de Student)</strong></p>
 ## data:  infected and non_infected
 ## W = 81, p-value = 0.0002047
 ## alternative hypothesis: true location shift is greater than 0</code></pre>
-<p>Le wilcow test montre que le gene est surexprimé quand il y a une
-infection. La statistique est noté W.</p>
 <p>Normalité : non respectée (p-value &lt; 0.05). Mann–Whitney : p-value
 très faible → rejet de H0.</p>
-<p>Conclusion. Le gène est significativement plus exprimé chez les
-plantes infectées.</p>
+<p><strong>Conclusion</strong>. Le gène est significativement plus
+exprimé chez les plantes infectées.</p>
 </div>
 </div>
 
