@@ -1,0 +1,20 @@
+---
+title: "Compte rendu TP4 - tests statistiques - ANOVA"
+author: "Mettre son nom et prénom et son groupe"
+date: "Mettre ici la date du jour"
+output: 
+   html_document: 
+      toc: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+# Analyse de la variance (ANOVA)
+
+## ANOVA à 1 facteur (une variable qualitative)
+
+A compléter
+
+## ANOVA à 2 facteurs (deux variables qualitatives) 
+
+A compléter

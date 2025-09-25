@@ -3,9 +3,9 @@ title: "Compte rendu TP2 - Régression linéaire, probabilités, intervalle de c
 author: "Laroussi Labid Bachri, M1 BBS"
 date: "`r format(Sys.Date(), '%d-%m-%Y')`"
 output:
-  pdf_document:
-    toc: TRUE
   html_document:
+    toc: TRUE
+  pdf_document:
     toc: TRUE
     theme: 'flatly' 
 editor_options: 

@@ -1,0 +1,17 @@
+prod_lait	race
+20.1	Abondance
+19.8	Abondance
+21.3	Abondance
+20.7	Abondance
+22.6	Bearnaise
+24.1	Bearnaise
+23.8	Bearnaise
+22.5	Bearnaise
+23.4	Bearnaise
+24.5	Bearnaise
+22.9	Bearnaise
+31.2	Jersiaise
+31.6	Jersiaise
+31	Jersiaise
+32.1	Jersiaise
+31.4	Jersiaise
