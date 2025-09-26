@@ -1,0 +1,107 @@
+---
+title: "Compte rendu TP4 - tests statistiques - ANOVA"
+author: "Mettre son nom et prénom et son groupe"
+date: "Mettre ici la date du jour"
+output: 
+   html_document: 
+      toc: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+# Analyse de la variance (ANOVA)
+
+Exploration jeu de données 
+
+## ANOVA à 1 facteur (une variable qualitative)
+
+```{r Exploration_jeu_de_donnes}
+resistance <- read.table("Resistance.txt", header=T, stringsAsFactors=T); head(resistance) ; tail(resistance)
+attach(resistance); names(resistance)
+
+table(lignee)
+
+tapply(score, lignee , mean )
+# va appliquer la fonction mean sur le socre et les regrouper par lignees.
+tapply(score, lignee, summary)
+# va appliquer la fonction summary sur le socre et les regrouper par lignees.
+hist(score, breaks=15, ylab="effectifs" )
+
+
+boxplot(score~lignee, col="green", ylab="score")
+
+```
+
+
+## Test d'adéquation à la loi normale (H0 = "les données suivent la loi Normale")
+```{r Tests_prealable_ANOVA}
+
+shapiro.test(score[lignee=="HM008"])
+shapiro.test(score[lignee=="A17"] )
+shapiro.test(score[lignee=="DZA45"])
+shapiro.test(score[lignee=="HM013"])
+# Ou on fait tapply
+tapply(score, lignee , shapiro.test )
+```
+On observe que les p value sont toutes superieures a 0.05 donc on accpete l'hypothese nulle.
+
+## Test d'homogénéité des variances intra-groupes (H0 : "les variances sont égales")
+
+```{r}
+
+
+bartlett.test(score~lignee)
+
+
+```
+
+On trouve une p value de 0.6988. Les groupes ont donc des variances homogènes. 
+
+
+## ANOVA à 1 facteur (le facteur est la variable "lignee") → H0 :"les moyennes des différents groupes sont égales"
+
+```{r Test_Anova}
+res = aov(score~lignee) # Test ANOVA
+
+summary(res) # Afficher tableau ANOVA.
+# Df = degre de liberte 
+# sum square = somme ecart a la moyenne.
+
+# Aire sous la courbe, p value = 1.18e-5. 
+```
+
+
+Toutes les moyennes ne sont pas egales. p value = 1.18e-5.
+
+```{r visualiser_moyennees_chaque_groupe}
+
+model.tables(res)
+
+tapply(score , lignee , mean) - mean(score) # Differences de la moyenne par rapport a moyenne generale.
+
+t.test(score[lignee=="DZA45"], score[lignee=="HM013"], var.equal=T)
+t.test(score[lignee=="DZA45"], score[lignee=="HM008"], var.equal=T)
+t.test(score[lignee=="DZA45"], score[lignee=="A17"], var.equal=T)
+t.test(score[lignee=="A17"], score[lignee=="HM013"], var.equal=T)
+t.test(score[lignee=="HM008"], score[lignee=="HM013"], var.equal=T)
+t.test(score[lignee=="A17"], score[lignee=="HM008"], var.equal=T)
+
+pairwise.t.test(score , lignee , pool.sd=F, p.adjust.method = "bonferroni" , var.equal=T)
+
+# il va faire les tests 2 a 2 
+
+# bonferroni va multipliler les p values et diviser le seuil par le nombre de tests. 
+
+```
+
+
+
+
+
+## ANOVA à 2 facteurs (deux variables qualitatives) 
+
+```{r}
+
+
+```
+
