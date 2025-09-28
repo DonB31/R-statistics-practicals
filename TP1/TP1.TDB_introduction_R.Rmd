@@ -1,19 +1,52 @@
 ---
 title: "Compte rendu - TP1 Initiation à R"
 author: "Laroussi Labid Bachri"
-date: "`r format(Sys.Date(), '%d-%m-%Y')`" # On peut recuperer automatiquement la date et choisir le format souhaite. Voir sources
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
 output:
   html_document:
-    toc: yes
-    theme: 'flatly' # On peut changer les thèmes pour personnaliser l'affichage de notre compte rendu dans le rendu HTML. (Peut necessiter d'installer des packages)
-    # css: cette option permet même d'utiliser un fichier css pour personnaliser le compte rendu. A placer dans le meme dossier. 
+    toc: true
+    theme: flatly
   pdf_document:
-    toc: yes
+    toc: true
 params:
   data: "croissance"
-  fichier_path: "/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/Croissance_plantes.txt"
+  fichier_path: ""     
   separateur: "\t"
 ---
+
+
+
+```{r setup, include=FALSE}
+set.seed(42)
+options(stringsAsFactors = FALSE)
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+library(here)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# chemins pratiques
+path_data   <- here::here("TP1", "data")
+path_output <- here::here("TP1", "output")
+dir.create(path_output, showWarnings = FALSE, recursive = TRUE)
+
+```
+
+```{r include=FALSE}
+# Choix du fichier via params (ou défaut sous TP1/data/)
+fichier <- if (nzchar(params$fichier_path)) {
+  params$fichier_path
+} else {
+  file.path(path_data, "Croissance_plantes.txt")
+}
+cat("Fichier détecté:", fichier, "\n")
+stopifnot(file.exists(fichier))
+croissance <- read.table(
+  fichier,
+  sep    = params$separateur,
+  header = TRUE,
+  stringsAsFactors = TRUE  
+)
+```
 
 # 1.Introduction
 ## Premiers pas avec R et RMarkdown 
@@ -39,7 +72,7 @@ Une variable a un nom (défini par l'utilisateur) qui permet d'accéder à son c
 L'argument include=TRUE affiche  le code dans le rendu HTML et le resultat également. 
 ```{r, include=TRUE} 
 x <- 1 + 2 + 3
-texte <- "j'aime bien R"
+texte <- "I like R"
 logique <- TRUE
 ```
 
@@ -126,14 +159,6 @@ Sous R la fonction x = input("Entrez le chemin du fichier : ") ne marche pas.
 
 Nous allons le saisir directement dans les params YAML pour le recuperer ici, car lors du Knit vers HTML, on ne peut pas interagir avec RMarkdown. Cette option marche si on execute le script R dans la console. 
 
-```{r}
-fichier <- params$fichier_path
-croissance <- read.table(fichier,
-  sep = params$separateur, # le separateur qui va etre utilisé est la tabulation mais celui ci peut varier ("\n" , ";" , "," etc)
-  header = T, # Afficher premiere ligne = noms des colonnes
-  stringsAsFactors = T
-) # Interpreter les strings comme Factors ici le poids, taille ou l'origine. Les variables peuvent être qualitative ( origine_geo ) ou quantitatives ( Poids , taille).
-```
 
 ```{r, echo=FALSE} 
 # l'argument echo=FALSE n'affiche pas le code dans le rendu HTML mais seulement le resultat.
@@ -174,15 +199,12 @@ cat("La médiance des plantes est de", round(mediane_poids_plantes, 2), "centim�
 ## Autres manipulations 
 ```{r}
 variables <- names(croissance)
-croissance$poids
-attach(croissance)
-poids # On peut faire attach pour éviter d'écrire croisssance$… à chaque fois.
 
-is_it_from_pyr <- origine_geo == "pyr"
-is_it_from_pyr
 
-plantes_pyr <- which(origine_geo == "pyr") # identifier quels arbres ont pour originegeo et donc qui ont origine_geo == 'pyr' -> TRUE
-plantes_pyr
+poids <- croissance$poids
+is_it_from_pyr <- croissance$origine_geo == "pyr"
+plantes_pyr <- which(croissance$origine_geo == "pyr")
+print(plantes_pyr)
 ```
 
 ## Quel est la taille moyenne des plantes provenant de Norwich?
@@ -193,7 +215,8 @@ moyenne_plantes_norwich <- mean(round(croissance$taille[plantes_norwich], 2))
 cat("La taille moyenne des plantes de Norwich est de", moyenne_plantes_norwich)
 
 # Quel est l'écart type des plantes provenant de Norwich?
-sd_norwich <- sd(plantes_norwich) 
+
+sd_norwich <- sd(croissance$taille[plantes_norwich])
 
 # On peut utiliser la fonction paste() pour améliorer la lisibilité.
 paste("L'ecart-type des plantes de Norwich est de", round(sd_norwich, 2))
@@ -202,32 +225,36 @@ paste("L'ecart-type des plantes de Norwich est de", round(sd_norwich, 2))
 La fonction **paste()** sert a concatener des variables avec des strings. (ou autre) 
 
 ```{r}
-pyr <- croissance[origine_geo == "pyr", 1:2]
+pyr <- croissance[croissance$origine_geo == "pyr", 1:2]
 pyr
 
 # Quel est la valeur de poids maximal et minimal des plantes Toulousaines et Espagnoles ?
 
-tls_esp <- croissance[origine_geo == "toulouse" | origine_geo == "espagne", 1:2]
+tls_esp <- croissance[croissance$origine_geo == "toulouse" | croissance$origine_geo == "espagne", 1:2]
 ```
 
 L'utilisation de pipe comme operateur. (comparable à l'operateur OR) 
 
 ```{r}
 poids_max_plantes_tls_esp <- max(tls_esp$poids)
-paste("Le poids maximal des plantes qui proviennent soit de Toulouse soit d'espagne est :", poids_max_plantes_tls_esp, "grammes")
+paste("Le poids maximal des plantes Toulouse/Espagne est :", poids_max_plantes_tls_esp, "g")
 
 poids_min_plantes_tls_esp <- min(tls_esp$poids)
-paste("Le poids minimal des plantes qui proviennent soit de Toulouse soit d'espagne est :", poids_min_plantes_tls_esp, "grammes")
+paste("Le poids minimal des plantes Toulouse/Espagne est :", poids_min_plantes_tls_esp, "g")
 
 # On va sauvegarder ces données dans un autre fichier .txt
-write.table(tls_esp, "croissance_plantes_tls_esp.txt", quote = F, col.names = T, row.names = F, sep = params$separateur)
+write.table(
+  tls_esp,
+  file = file.path(path_output, "croissance_plantes_tls_esp.txt"),
+  quote = FALSE, col.names = TRUE, row.names = FALSE, sep = params$separateur
+)
 ```
 
 ## 2.1 Fonctions graphiques 
 
 Nous allons maintenant répresenter les données sous forme graphique pour mieux visulaiser les données.  
 ```{r}
-resume_origine_geo <- summary(origine_geo) # on synthetise les origines des plantes et compter combien de plantes ont tel origine.
+resume_origine_geo <- summary(croissance$origine_geo) # on synthetise les origines des plantes et compter combien de plantes ont tel origine.
 camembert_origine <- function() {
   pie(resume_origine_geo,
     main = "Origine géographique des plantes", # Titre de la figure
@@ -239,11 +266,11 @@ camembert_origine <- function() {
 On peut écrire notre propre **fonction** pour appeler notre pie(…) et pas faire de "copier-coller"
 
 ```{r}
-png("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png")
+png(file.path(path_output, "camembert_origine.png"))
 camembert_origine()
 dev.off()
 
-file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/camembert_origine.png") # On peut verifier si notre fichier existe.
+
 ```
 
 On peut verifier si notre fichier a bien été exporté. Cette option peut etres très utile lors de l'automatisation de l'exportation de nos fichier png (camembert , boxplots, etc ) sans avoir a verifier visuellement un par un dans le dossier. Cette fonction renvoie une valeur logique "TRUE" ou "FALSE
@@ -256,7 +283,6 @@ barplot_origine_geo <- function() {
   )
 }
 
-dir.create("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/", recursive = TRUE)
 ```
 
 Cette fonction va nous permettre de créer un dossier meme s'il existe pas sur le working directory. L'option recursive permet de créer les dossiers parents ( ceux qui sont avant ) même s'ils n'ont pas encore été crées. 
@@ -266,26 +292,23 @@ Exemple
 Avec l'option recursive = TRUE , le dossier figure_tp1 va être crée mais egalement le dossier TP_TDB même s'il existe pas. 
 
 ```{r}
-jpeg("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg")
+jpeg(file.path(path_output, "Barplot_origine_geo.jpeg"))
 barplot_origine_geo()
 dev.off()
-
-file.exists("/Users/bachri/Documents/M1_BBS/S7/tdb/tp_tdb/figure_tp1/Barplot_origine_geo.jpeg")
-# On est sur une variable qualitative, on ne va parler de histogramme mais de diagramme en barres.
 ```
 
 ```{r}
 # Histogrammes (variable quantitative)
 
-hist(taille, xlim = c(40, 90), xlab = "Taille(cm)", ylab = "effectif", freq = T, main = "Histogramme de la taille des plantes", col = rainbow(10))
+hist(croissance$taille, xlim = c(40, 90), xlab = "Taille(cm)", ylab = "effectif", freq = T, main = "Histogramme de la taille des plantes", col = rainbow(10))
 # xlim=c(x,y) sert a limiter les valuers affichées sur l'histogramme.
 
 # Boite à moustaches (variable quantitative)
-boxplot(taille, main = "Boxplot de la taille des plantes", ylab = "Taille", col = "salmon")
+boxplot(croissance$taille, main = "Boxplot de la taille des plantes", ylab = "Taille", col = "salmon")
 
 # Plusieurs boite à moustaches ( une variable quantitative en fonction des modalité d'une variable qualitative )
 
-plot(origine_geo, taille, las = 3, main = "Boxplot de la taille des plantes en fonction de l'origine geographique", col = "red", ylab = "Taille", xlab = "Origines", notch = F)
+
 ```
 
 Les boxplots montrent que certaines origines géographiques présentent une variabilité faible (boîtes très resserrées), alors que d’autres sont plus dispersées.
@@ -293,31 +316,40 @@ L’ajout de l'option (notch=TRUE) nous permet d’avoir une indication sur la c
 Le calcul de l'intervalle de confiance de certains notch dépasse les "hinges" ( 1er et 3eme quartile ) 
 
 ```{r}
-plot(origine_geo, taille, las = 3, main = "Boxplot de la taille des plantes en fonction de l'origine geographique", col = "red", ylab = "Taille", xlab = "Origines", notch = T)
+plot(croissance$origine_geo, croissance$poids, las = 3,
+     main = "Poids ~ Origine (notch)", col = "green", ylab = "Poids",
+     xlab = "Origines", notch = TRUE)
 ```
 
 Ici, on a le message d'erreur mais on peut observer que les notches dépassent les quartiles sur certains plantes. 
 
 ```{r}
-plot(origine_geo, poids, las = 3, main = "Boxplot du poids des plantes en fonction de l'origine geographique", col = "green", ylab = "Taille", xlab = "Origines", notch = T)
+plot(croissance$origine_geo, poids, las = 3, main = "Boxplot du poids des plantes en fonction de l'origine geographique", col = "green", ylab = "Taille", xlab = "Origines", notch = T)
 ```
 
 Dans le cas de la variable poids, sur certains boxplot le notch est bien representé. 
 
 ```{r}
-stripchart(taille ~ origine_geo, las = 1)
+stripchart(croissance$taille ~ croissance$origine_geo, las = 1)
 
-plot(taille, poids, col = "red", main = "Evolution du poids en fonction de la taille")
+plot(croissance$taille, croissance$poids, col = "red",
+     xlab = "Taille", ylab = "Poids",
+     main = "Évolution du poids en fonction de la taille")
 
 # Affichage de plusieurs graphiques dans la meme fenetre
 par(mfrow = c(2, 2)) # 2 en lignes et 2 en colonnes par exemple
-hist(taille, xlim = c(40, 90), xlab = "taille (cm)", ylab = "effectif", freq = T, main = "histogramme de la taille des plantes", col = "orange")
+hist(croissance$taille, xlim = c(40, 90), xlab = "taille (cm)", ylab = "effectif", freq = T, main = "histogramme de la taille des plantes", col = "orange")
 # xlim=c(x,y) sert a limiter les valuers affichées sur l'histogramme.
-boxplot(taille, main = "Boxplot de la taille des plantes", ylab = "taille")
-plot(taille ~ origine_geo, las = 3)
-stripchart(taille ~ origine_geo, las = 1)
+boxplot(croissance$taille, main = "Boxplot de la taille des plantes", ylab = "taille")
+plot(croissance$taille ~ croissance$origine_geo, las = 3)
+stripchart(croissance$taille ~ croissance$origine_geo, las = 1)
 
-# detach(croissance). Important a utiliser lorsqu'on utilise attach pour travailler par exemple sur un autre jeu de données sans les mélanger.
+
+```
+
+
+```{r}
+sessionInfo()
 ```
 
 ## Fin du compte rendu. TDB TP1 M1
