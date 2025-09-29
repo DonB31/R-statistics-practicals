@@ -1,0 +1,263 @@
+---
+title: " TP5 - Rice Atlas - ACP, clustering, caractérisation d'une liste de gènes"
+author: "Vos nom et prénom"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 120)
+```
+
+
+# Environnement de travail, chargement et préparation des données
+
+
+Chargement de la librairie `tidyverse`.
+```{r import_libraries}
+library(tidyverse)
+```
+
+```{r import_files , include=FALSE}
+info = read.delim("rice.atlas.info.tsv")
+info
+
+library(data.table)
+dm = as.matrix(fread("rice.atlas.expr.normalized.tsv"), rownames=1)
+```
+
+```{r Chargement_et_preparation_des_donnees, echo=FALSE}
+
+dm[1:10,1:5] # 10 premieres lignes et 10 premieres colonnes
+
+dim(dm) # la premiere dimension c'est la ligne et la deuxieme c'est la colonne.
+
+
+hist(dm , main="Histogramme")
+
+hist(log2(dm)) # une bonne partie sera entre -2 et 0 log10 
+ 
+```
+
+l'expression des genes n'est pas lineaire au cours du temps et le traitement de donnes necessite la plupart du temps travailelr sur une echele logarithmique. 
+
+
+GSE&4304 series d'hybridation
+
+GSM sample 
+98 echantillons avec 3 repetiitons du pollen au stde 3 developpemnt par exemple 
+
+GPL PL= plateforme -> design de la puce microaaray 
+on sait quel spot correspond a quel gene 
+
+E5EC32 rouge vert bleu RGB par 2 caracteres 
+
+On a 57382 colonnes et 98 lignes.
+
+On a le niveau d'expression.
+
+
+Distributions des valeurs d'expression par hybridation. Le résultat de l'effet de la normalisation effectuée pourra se visualiser à l'aide de boîtes à moustaches : 
+
+on va faire la transpose de dm inverse ligne et colonne  
+98 colonnes et 57000 lignes et faire la boite a moustaches 
+```{r}
+boxplot(log2(t(dm)), las=3)
+```
+
+pour une hybridation colonne , on obtient l'expression de gene.
+
+3 repetitions don con devrait obtenir les meme intensites.
+
+on multiplie chauqe valeur pour la 75eme valeur du percentile.
+
+
+normalisation par le 75eme percentile. 
+
+on prend les 57000 valuers initiales de la colonnes et on divise tout par la 75eme valeur 
+
+normalise par rapport a l valeur du 3eme quartile.
+
+l'axe des y est le niveau d'expression. 
+
+
+
+```{r}
+quantile(t(dm)[1,], 0.75)
+```
+
+
+```{r}
+plot(dm[,"AFFX.OS.18SrRNA_s_at"], col=info$color, pch=16, main="Expression (log2) du probeset AFFX.OS.18SrRNA_s_at dans les 98 microarrays réalisés", axes=F)
+axis(1, at=1:98,labels=rownames(dm), las=3)
+axis(2)
+```
+On voit sur cette figure le nv d'expression de chaque gene.
+
+# Analyse en composantes principales 
+
+A compléter
+
+```{r}
+stages = info$stage %in% c('R', 'S', 'YL', 'P1', 'P3')
+info_s = info[stages,]
+info_s
+```
+
+```{r Analyse_composantes_principales}
+df_s = read.delim("rice.atlas.expr.normalized.sample.tsv", row.names=1)
+
+df_s
+# les individus et les 60 genes selectionnes 
+
+acp = prcomp(log2(df_s), scale.=F)
+
+summary(acp)
+```
+
+
+scale = normaliser ( ce qu'on a verifie avec boite a moustaches.)
+
+
+a PC15 on a 1 cumultaive proportion donc 100% de l'information. 
+
+le nombre de PC1-16 cest les composantes principales qui va decroite ppour que la premeire composante principals soit au maimum de distance puis decroit peitt a petit variance. (proportion of variance).
+
+plus la variance est grande plus elle est representative.
+
+si 2 points sont eloigness dan ska proportion veut dire que les indivuds sont eloigness au jeu de donnes de depart. 
+
+y'a pas d'orientation des axes un coup c a droite un autre a gauche. 
+
+le plus important est la distance entre ces points.
+
+
+y'a 60 expressions de gene derriere chauqe point 
+
+sur la figure on peut pas lier quel gene est plus ou moins exprimé imposbile
+
+le but est de comparer les expressions de tous le sgenes et comparer nos iniivuds et visualiser a quel distance se trouvnet les uns uax autres
+
+```{r}
+library(factoextra)
+fviz_screeplot(acp, addlabels=T)
+
+fviz_pca_ind(acp, axes=c(1,3), col.ind=info_s$stage)
+```
+
+PC1 est compraabe a la ligne de regression la dispersion mais en 3D x y z et pn va multiplier ces points par une certaine valeur
+
+
+acp$rotation vecteur propre 
+
+chauqe valeurde #acp $ rotation  est multiplie par acp$x pour donner a la fin une seule valeur 
+
+une a une premiere avec la premiere 2eme avec la 2eme
+
+
+
+
+
+# Analyse différentielle 
+
+A compléter
+
+
+
+
+# Analyse de clustering 
+```{r}
+library(made4)
+```
+
+
+made4 package tres utilise en analyse multivariees.
+
+```{r}
+
+
+YL.dm <- read.table("YL.dm.tsv" , header = TRUE) # Normalisé 
+deg.YL <- read.table("deg.YL.tsv") # Non normalise
+
+# ward
+heatplot(log2(YL.dm), cols.default = F, lowcol = 'blue', highcol='yellow', dualScale = F, scale='column', method='ward.D2', RowSideColors=info$color)
+
+# average
+heatplot(log2(YL.dm), cols.default = F, lowcol = 'blue', highcol='yellow', dualScale = F, scale='column', method='average', RowSideColors=info$color)
+
+#single
+heatplot(log2(YL.dm), cols.default = F, lowcol = 'blue', highcol='red', dualScale = F, scale='column', method='single', RowSideColors=info$color)
+
+#complete
+heatplot(log2(YL.dm), cols.default = F, lowcol = 'blue', highcol='red', dualScale = F, scale='column', method='complete', RowSideColors=info$color)
+```
+
+normalisation centree reduit scale ="column" 
+
+homogeneisation des groupes 
+
+y'a 2 distance 
+distance entre indiivuds = matrice de depart
+
+distance entre clusters 
+
+la distance de ward 
+variance totale = var a + var b + var c 
+
+plus on fusionne  plus ya du bruit 
+
+AB C
+Var ab = var c 
+
+A = bc
+var a + var bc
+
+AC  b
+
+var ac + var b
+
+choisi la fonction qui fait le moins augmenter la variance globale
+
+z-score normalisé 
+moyenn et ecart type
+ 
+ on compte combien de ecart type de plus - 6 / 6 ici par ex 
+ 
+
+
+# Caractérisation d'une liste de gènes 
+
+Pour cette partie, nous allons nous concentrer sur les gènes sur-exprimés dans la condition YL afin d'étudier s'ils sont annotés comme impliqués dans un ou des processus biologiques particuliers.
+
+Première étape : récupération des identifiants des probesets sur-exprimés :
+
+```{r}
+YL.up <- deg.YL[ deg.YL$logFC>0 , ]
+YL.up
+write.table(YL.up, "deg.YL.up.tsv", sep="\t")
+```
+
+```{r}
+dbinom(124 , 2240 , prob= 274/57381 )
+pbinom(124 , 2240 , prob= 274/57381 , lower.tail=FALSE)
+
+```
+on cherche a avoir la proba d'avoir 125 succes.
+
+p-value on teste si tel gene soit bien place dans la gene ontology.
+
+
+on trouve bcp de bruits et redondance des donnees obtenus. 
+
+common gene implqiue dans une fonction ou autre processees etc tire au hasard et size total implique dans tout le genome
+
+redondance car un gene peut etre tire plusierus fois 
