@@ -12,6 +12,27 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r}
+set.seed(42)
+options(stringsAsFactors = FALSE)
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+library(here)
+
+# Dossiers (figures / sorties)
+path_output <- here("TP3_Tests", "output")
+dir.create(path_output, showWarnings = FALSE, recursive = TRUE)
+
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  fig.width = 6, fig.height = 4, dpi = 150,
+  fig.path = file.path(path_output, "")
+)
+```
+
+
+
 # 1. Tests de Chi2
 
 ## 1.1. Chi2 de conformité
@@ -102,6 +123,11 @@ Dans cet exercice, nous allons chercher à comparer les valeurs d'une variable q
 Col_0=c(4.30,4.25,3.50,3.35,4.30,3.75,3.55,4.10,3.95,4.55,4.25,3.75,3.85,4.15,3.55,4.75,3.95,3.65)
 Mut_X1=c(3.06,4.05,3.95,3.40,3.80,3.95,3.65,4,3.85,3.95,3.65,3.75,3.4)
 
+mean_col <- mean(Col_0); mean_mut <- mean(Mut_X1)
+sd_col   <- sd(Col_0);   sd_mut   <- sd(Mut_X1)
+
+cat(sprintf("Moyennes: Col_0=%.2f ; Mut_X1=%.2f\nSD: Col_0=%.2f ; Mut_X1=%.2f\n",
+            mean_col, mean_mut, sd_col, sd_mut))
 ```
 
 On compare la taille de plantes de type sauvage (Col_0) et mutant (Mut_X1).
@@ -120,10 +146,15 @@ cat("La taille moyenne des plantes wild est de",taille_moyenne_wild, "et la tail
 On peut les representer par des histogrammes. 
 ```{r Visualisation}
 # Représentation graphique des données
-boxplot(Col_0,Mut_X1,names=c("Col_0","Mut_X1"),col=c("white","darkgreen"),ylab="taille (cm)")
-abline(h=mean(Col_0),col="black",lty=3,lwd=2)
-abline(h=mean(Mut_X1),col="green",lty=3,lwd=2)
-legend("topright", legend = c("Mut_X1","Col_0" ), text.col = c("darkgreen","black"))
+par(mfrow = c(1,2))
+hist(Col_0,  col = "gray90", main = "Histogramme Col_0", xlab = "Taille (cm)")
+hist(Mut_X1, col = "gray90", main = "Histogramme Mut_X1", xlab = "Taille (cm)")
+
+par(mfrow = c(1,1))
+boxplot(Col_0, Mut_X1, names = c("Col_0","Mut_X1"),
+        col = c("white","lightgreen"), ylab = "Taille (cm)", main = "Taille par groupe")
+abline(h = mean_col, col = "black", lty = 3)
+abline(h = mean_mut, col = "darkgreen", lty = 3)
 ```
 
 Mais aussi avec des boxplots. 
@@ -133,8 +164,12 @@ On observe une plus grande dispersion chez les groupe Col_0.
 ## Test d'adéquation à la loi normale (H0 = "les données suivent la loi Normale")
 
 ```{r}
-shapiro.test(Col_0)
-shapiro.test(Mut_X1)
+sh_col <- shapiro.test(Col_0)
+sh_mut <- shapiro.test(Mut_X1)
+sh_col$p.value; sh_mut$p.value
+
+f_test <- var.test(Col_0, Mut_X1)  # test de Fisher
+f_test
 ```
 
 Normalité : p-value > 0.05 → pas de rejet → données normales.
@@ -156,10 +191,12 @@ On a une p-value de 0.3234 donc on accepte H0.
 On peut passer au test de comapraison des moyennes. 
 # Test d'homogénéité (de comparaison) des moyennes (H0 = "les moyennes sont égales")
 ```{r}
-t.test(Col_0,Mut_X1,var.equal = T)
+t_bi  <- t.test(Col_0, Mut_X1, var.equal = (f_test$p.value > 0.05))
+t_gt  <- t.test(Col_0, Mut_X1, var.equal = (f_test$p.value > 0.05), alternative = "greater")
+t_lt  <- t.test(Col_0, Mut_X1, var.equal = (f_test$p.value > 0.05), alternative = "less")
 
-t.test(Col_0,Mut_X1,var.equal = T, alternative = "greater")
-t.test(Col_0,Mut_X1,var.equal = T, alternative = "less")
+t_bi
+t_gt$p.value; t_lt$p.value
 ```
 
 Bilatéral : p-value > 0.05 → pas de différence significative.
@@ -200,9 +237,8 @@ Mann–Whitney : p-value très faible → rejet de H0.
 **Conclusion**. Le gène est significativement plus exprimé chez les plantes infectées.
 
 
-```{r include=FALSE}
+```{r session include=FALSE}
 
-#Warning message car on a des ex-aquos 
-#L'expression du gene est significativement  surexprimée ou les plantes sont infectées. Mécanisme de déf. 
+sessionInfo() 
 ```
 
