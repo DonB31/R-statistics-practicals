@@ -1,61 +1,37 @@
-# TP R – Master 1 Bioinformatique (UE TDB)
+TP3 – Tests statistiques
+========================
 
-![R](https://img.shields.io/badge/R-4.4.1-blue?logo=r)
-![Reproducibility](https://img.shields.io/badge/Reproducibility-renv-success)
-![Status](https://img.shields.io/badge/Status-Work_in_Progress-yellow)
-![License](https://img.shields.io/badge/License-MIT-green)
+Ce dossier contient le compte rendu du TP3 de l’UE TDB (M1 BBS) consacré aux tests statistiques en R et RMarkdown.
 
-Ce dépôt contient mes **travaux pratiques en R** réalisés dans le cadre de l’UE **Traitement des Données Biologiques (TDB)** du Master 1 Bioinformatique.  
+Contenu
+-------
+- TP3.Rmd : script RMarkdown avec le compte rendu complet
+- output/ : dossier de sortie pour les figures et rendus HTML/PDF
 
-Objectifs :  
-- **Documenter mes analyses** sous forme de rapports reproductibles (RMarkdown).  
-- **Constituer un portfolio** pour améliorer mes compétences en **statistiques, visualisation et reproductibilité**.  
+Objectifs pédagogiques
+----------------------
+- Appliquer les tests du Chi² (conformité et indépendance)
+- Comparer des moyennes via des tests paramétriques (Student) et non paramétriques (Mann–Whitney)
+- Vérifier les hypothèses de normalité (test de Shapiro) et d’homogénéité des variances (test de Fisher)
+- Interpréter les résultats (p-values, hypothèses H0/H1)
 
----
+Prérequis
+---------
+- R ≥ 4.0
+- Packages : here, knitr, rmarkdown
 
-## Organisation du dépôt
+Installation rapide :
+install.packages(c("here","knitr","rmarkdown"))
 
-- **TP1/** – *Initiation à R et RMarkdown*  
-Manipulation de variables, vecteurs, statistiques descriptives, import/export de données, premiers graphiques.  
+Optionnel : utilisation de renv pour geler les versions
 
-- **TP2_Regression_IC/** – *Régression linéaire, probabilités, intervalles de confiance*  
-Modèles linéaires simples, interprétation statistique, simulation.  
+Reproduction
+------------
+Rendu HTML :
+Rscript -e "rmarkdown::render('TP3_Tests/TP3.Rmd', output_dir='TP3_Tests/output')"
 
-- **TP3_Tests/** – *Tests statistiques*  
-Tests paramétriques et non paramétriques, comparaison d’échantillons.  
+Ou Knit a aprtir de Rstudio:
 
-- **TP4_ANOVA/** – *Analyse de la variance (ANOVA)*  
-Comparaison de moyennes entre groupes, interprétation graphique et statistique.  
-
-- **TP5_ACP-Clustering/** – *Caractérisation d’une liste de gènes*  
- ACP, clustering et exploration fonctionnelle.  
-
-Chaque dossier contient :  
-- Le fichier **`.Rmd`** principal.  
-- Un sous-dossier `data/` pour les données d’entrée.  
-- Un sous-dossier `output/` pour les figures et rendus générés automatiquement.  
-
----
-
-## Reproductibilité
-
-Le projet utilise [`renv`](https://rstudio.github.io/renv/) pour geler les versions des packages R.  
-Cela garantit que les analyses donnent les **mêmes résultats** sur n’importe quelle machine.
-
-### Étapes pour reproduire :
-
-```bash
-# 1. Cloner le dépôt
-git clone https://github.com/DonB31/R-statistics-practicals
-cd R-statistics-practicals
-
-# 2. Restaurer l’environnement R
-Rscript -e "install.packages('renv'); renv::restore()"
-
-# 3. Lancer les TP dans RStudio
-# Exemple : ouvrir TP1/TP1.Rmd et exécuter
-
-Auteur : Laroussi Labid Bachri
-Master 1 Bioinformatique (BBS) – Université de Toulouse
-
-www.linkedin.com/in/laroussi-bachri | https://github.com/DonB31
+Remarque
+--------
+Ce TP s’inscrit dans un portfolio de statistiques et reproductibilité (TP1 à TP4).
