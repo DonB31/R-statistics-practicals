@@ -2,3 +2,17 @@
 .Rhistory
 .RData
 .Ruserdata
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Sorties et artefacts
+**/output/
+**/figure_tp*/
+*.html
+*.pdf
+
+# Gros fichiers non versionnés
+TP5_ACP_Clustering/data/rice.atlas.expr.normalized.tsv
