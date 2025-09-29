@@ -30,7 +30,7 @@ Reproduction
 Rendu HTML :
 Rscript -e "rmarkdown::render('TP3_Tests/TP3.Rmd', output_dir='TP3_Tests/output')"
 
-Ou Knit a aprtir de Rstudio:
+Ou Knit a partir de Rstudio:
 
 Remarque
 --------
