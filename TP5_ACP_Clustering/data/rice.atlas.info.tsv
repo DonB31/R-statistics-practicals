@@ -1,0 +1,99 @@
+id	desc	stage	replicate	color	GSM
+An1.r1	Anther at An1, biological rep1	An1	r1	#E5EC32	GSM351427
+An1.r2	Anther at An1, biological rep2	An1	r2	#E5EC32	GSM351428
+An1.r3	Anther at An1, biological rep3	An1	r3	#E5EC32	GSM351429
+Mei1.r1	Anther at Mei1, biological rep1	Mei1	r1	#ECCF32	GSM351430
+Mei1.r2	Anther at Mei1, biological rep2	Mei1	r2	#ECCF32	GSM351431
+Mei1.r3	Anther at Mei1, biological rep3	Mei1	r3	#ECCF32	GSM351432
+M1.r1	Anther at M1, biological rep1	M1	r1	#ECAF32	GSM351433
+M1.r2	Anther at M1, biological rep2	M1	r2	#ECAF32	GSM351434
+M1.r3	Anther at M1, biological rep3	M1	r3	#ECAF32	GSM351435
+M1.r4	Anther at M1, biological rep4	M1	r4	#ECAF32	GSM351436
+M2.r1	Anther at M2, biological rep1	M2	r1	#EC8832	GSM351437
+M2.r2	Anther at M2, biological rep2	M2	r2	#EC8832	GSM351438
+M2.r3	Anther at M2, biological rep3	M2	r3	#EC8832	GSM351439
+M3.r1	Anther at M3, biological rep1	M3	r1	#EC5932	GSM351440
+M3.r2	Anther at M3, biological rep2	M3	r2	#EC5932	GSM351441
+M3.r3	Anther at M3, biological rep3	M3	r3	#EC5932	GSM351442
+M3.r4	Anther at M3, biological rep4	M3	r4	#EC5932	GSM351443
+P1.r1	Anther at P1, biological rep1	P1	r1	#EC3233	GSM351444
+P1.r2	Anther at P1, biological rep2	P1	r2	#EC3233	GSM351445
+P1.r3	Anther at P1, biological rep3	P1	r3	#EC3233	GSM351446
+P2.r1	Anther at P2, biological rep1	P2	r1	#EC324B	GSM351447
+P2.r2	Anther at P2, biological rep2	P2	r2	#EC324B	GSM351448
+P2.r3	Anther at P2, biological rep3	P2	r3	#EC324B	GSM351449
+P3.r1	Anther at P3, biological rep1	P3	r1	#EC326D	GSM351450
+P3.r2	Anther at P3, biological rep2	P3	r2	#EC326D	GSM351451
+P3.r3	Anther at P3, biological rep3	P3	r3	#EC326D	GSM351452
+St.r1	Stigma control, biological rep1	St	r1	#78CC56	GSM357614
+St.r2	Stigma control, biological rep2	St	r2	#78CC56	GSM357615
+St.r3	Stigma control, biological rep3	St	r3	#78CC56	GSM357616
+Ov0.r1	Ovary control, biological rep1	Ov0	r1	#579040	GSM357617
+Ov0.r2	Ovary control, biological rep2	Ov0	r2	#579040	GSM357618
+Ov0.r3	Ovary control, biological rep3	Ov0	r3	#579040	GSM357619
+Poll1.r1	Pollinating stigma, biological rep1	Poll1	r1	#A342A7	GSM357620
+Poll1.r2	Pollinating stigma, biological rep2	Poll1	r2	#A342A7	GSM357621
+Ov1.r1	Pollinating ovary, biological rep1	Ov1	r1	#7B42A7	GSM357622
+Ov1.r2	Pollinating ovary, biological rep2	Ov1	r2	#7B42A7	GSM357623
+Ov1.r3	Pollinating ovary, biological rep3	Ov1	r3	#7B42A7	GSM357624
+Poll2.r1	Pollen tube growth, biological rep1	Poll2	r1	#5742A7	GSM357625
+Poll2.r2	Pollen tube growth, biological rep2	Poll2	r2	#5742A7	GSM357626
+Poll2.r3	Pollen tube growth, biological rep3	Poll2	r3	#5742A7	GSM357627
+Fer1.r1	Fertilization, biological rep1	Fer1	r1	#4342A7	GSM357628
+Fer1.r2	Fertilization, biological rep2	Fer1	r2	#4342A7	GSM357629
+Fer1.r3	Fertilization, biological rep3	Fer1	r3	#4342A7	GSM357630
+Fer2.r1	Zygote formation, biological rep1	Fer2	r1	#425EA7	GSM357631
+Fer2.r2	Zygote formation, biological rep2	Fer2	r2	#425EA7	GSM357632
+Fer2.r3	Zygote formation, biological rep3	Fer2	r3	#425EA7	GSM357633
+Em0.r1	Embryosac control_bottom, biological rep1	Em0	r1	#427CA7	GSM357636
+Em0.r2	Embryosac control_bottom, biological rep2	Em0	r2	#427CA7	GSM357637
+Em0.r3	Embryosac control_bottom, biological rep3	Em0	r3	#427CA7	GSM357638
+Em1.r1	1 DAP embryosac_bottom, biological rep1	Em1	r1	#429CA7	GSM357639
+Em1.r2	1 DAP embryosac_bottom, biological rep2	Em1	r2	#429CA7	GSM357640
+Em1.r3	1 DAP embryosac_bottom, biological rep3	Em1	r3	#429CA7	GSM357641
+Em2.r1	2 DAP embryosac_bottom, biological rep1	Em2	r1	#71969A	GSM357642
+Em2.r2	2 DAP embryosac_bottom, biological rep2	Em2	r2	#71969A	GSM357643
+Em2.r3	2 DAP embryosac_bottom, biological rep3	Em2	r3	#71969A	GSM357644
+Em5.r1	3 DAP embryosac_bottom, biological rep1	Em5	r1	#4E6567	GSM357645
+Em5.r2	3 DAP embryosac_bottom, biological rep2	Em5	r2	#4E6567	GSM357646
+Em5.r3	3 DAP embryosac_bottom, biological rep3	Em5	r3	#4E6567	GSM357647
+Em7.r1	4 DAP embryosac_bottom, biological rep1	Em7	r1	#135E63	GSM357648
+Em7.r2	4 DAP embryosac_bottom, biological rep2	Em7	r2	#135E63	GSM357649
+Em7.r3	4 DAP embryosac_bottom, biological rep3	Em7	r3	#135E63	GSM357650
+Es0.r1	Embryosac control_top, biological rep1	Es0	r1	#00919B	GSM357651
+Es0.r2	Embryosac control_top, biological rep2	Es0	r2	#00919B	GSM357652
+Es0.r3	Embryosac control_top, biological rep3	Es0	r3	#00919B	GSM357653
+Es1.r1	1 DAP embryosac_top, biological rep1	Es1	r1	#03BCC9	GSM357654
+Es1.r2	1 DAP embryosac_top, biological rep2	Es1	r2	#03BCC9	GSM357655
+Es2.r1	2 DAP embryosac_top, biological rep1	Es2	r1	#25DAE7	GSM357656
+Es2.r2	2 DAP embryosac_top, biological rep2	Es2	r2	#25DAE7	GSM357657
+Es5.r1	3 DAP embryosac_top, biological rep1	Es5	r1	#5DEAF4	GSM357658
+Es5.r2	3 DAP embryosac_top, biological rep2	Es5	r2	#5DEAF4	GSM357659
+Es7.r1	4 DAP embryosac_top, biological rep1	Es7	r1	#88B5B8	GSM357660
+Es7.r2	4 DAP embryosac_top, biological rep2	Es7	r2	#88B5B8	GSM357661
+Es7.r3	4 DAP embryosac_top, biological rep3	Es7	r3	#88B5B8	GSM357662
+C0.r1	Growing callus, biological rep1	C0	r1	#EC2E22	GSM357664
+C0.r2	Growing callus, biological rep2	C0	r2	#EC2E22	GSM357665
+C0.r3	Growing callus, biological rep3	C0	r3	#EC2E22	GSM357666
+C2.r1	Regenerating callus 2 days, biological rep1	C2	r1	#EC224D	GSM357667
+C2.r2	Regenerating callus 2 days, biological rep2	C2	r2	#EC224D	GSM357668
+C2.r3	Regenerating callus 2 days, biological rep3	C2	r3	#EC224D	GSM357669
+C4.r1	Regenerating callus 4 days, biological rep1	C4	r1	#EC227B	GSM357670
+C4.r2	Regenerating callus 4 days, biological rep2	C4	r2	#EC227B	GSM357671
+C4.r3	Regenerating callus 4 days, biological rep3	C4	r3	#EC227B	GSM357672
+C6.r1	Regenerating callus 6 days, biological rep1	C6	r1	#EC2295	GSM357673
+C6.r2	Regenerating callus 6 days, biological rep2	C6	r2	#EC2295	GSM357674
+C6.r3	Regenerating callus 6 days, biological rep3	C6	r3	#EC2295	GSM357675
+C8.r1	Regenerating callus 8 days, biological rep1	C8	r1	#EC22AC	GSM357676
+C8.r2	Regenerating callus 8 days, biological rep2	C8	r2	#EC22AC	GSM357677
+C8.r3	Regenerating callus 8 days, biological rep3	C8	r3	#EC22AC	GSM357678
+R.r1	Root, biological rep1	R	r1	#BC871B	GSM357679
+R.r2	Root, biological rep2	R	r2	#BC871B	GSM357680
+R.r3	Root, biological rep3	R	r3	#BC871B	GSM357681
+S.r1	Shoot, biological rep1	S	r1	#BBA069	GSM357682
+S.r2	Shoot, biological rep2	S	r2	#BBA069	GSM357683
+S.r3	Shoot, biological rep3	S	r3	#BBA069	GSM357684
+YL.r1	Young leaf, biological rep1	YL	r1	#42A919	GSM357685
+YL.r2	Young leaf, biological rep2	YL	r2	#42A919	GSM357686
+YL.r3	Young leaf, biological rep3	YL	r3	#42A919	GSM357687
+YL.r4	Young leaf, biological rep4	YL	r4	#42A919	GSM357688

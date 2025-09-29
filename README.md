@@ -20,6 +20,9 @@ L’objectif est double :
 
 - **TP4_ANOVA/** – Analyse de la variance (ANOVA)  
   *Comparaison de moyennes entre groupes, interprétation graphique et statistique.*  
+  
+- **TP5_ACP-Clustering/** – Caractérisation d'une liste de gènes.
+
 
 Chaque dossier contient :
 - Le fichier **`.Rmd`** principal.  

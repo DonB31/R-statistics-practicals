@@ -1,0 +1,64 @@
+---
+title: "M1 TDB TP Rice Expression Atlas"
+author: "Vos nom et prénom"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: show
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 120)
+```
+
+
+# Environnement de travail, chargement et préparation des données
+
+
+Chargement de la librairie `tidyverse`.
+```{r import_libraries}
+library(tidyverse)
+```
+
+
+
+
+
+
+
+# Analyse en composantes principales 
+
+A compléter
+
+
+
+
+
+
+
+
+# Analyse différentielle 
+
+A compléter
+
+
+
+
+
+# Analyse de clustering 
+
+A compléter
+
+
+
+
+
+
+# Caractérisation d'une liste de gènes 
+
+A compléter
