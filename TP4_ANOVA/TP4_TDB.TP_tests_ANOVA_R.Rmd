@@ -1,17 +1,45 @@
 ---
-title: "Compte rendu TP4 - tests statistiques - ANOVA"
+title: "Compte rendu TP4 — Tests statistiques (ANOVA)"
 author: "Laroussi Labid Bachri, M1 BBS"
 date: "`r format(Sys.Date(), '%d-%m-%Y')`"
-output: 
-   html_document: 
-      toc: TRUE
-editor_options: 
+output:
+  html_document:
+    toc: true
+    theme: flatly
+  pdf_document:
+    toc: true
+editor_options:
   chunk_output_type: console
+params:
+  # chemins par défaut (relatifs à la racine du dépôt)
+  fichier_resistance: "TP4_ANOVA/data/resistance.txt"
+  fichier_croissance: "TP4_ANOVA/data/croissance.txt"
+  fichier_vache:      "TP4_ANOVA/data/vache.txt"
 ---
-```{r setup}
+
+```{r setup, include=FALSE}
+set.seed(42)
+options(stringsAsFactors = FALSE)
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+library(here)
+
+# Dossiers
+path_output <- here("TP4_ANOVA", "output")
+dir.create(path_output, showWarnings = FALSE, recursive = TRUE)
+
+# Knit depuis la racine du repo
+knitr::opts_knit$set(root.dir = here::here())
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  fig.width = 6, fig.height = 4, dpi = 150,
+  fig.path = file.path(path_output, "")
+)
+
+# Packages
+if (!requireNamespace("agricolae", quietly = TRUE)) install.packages("agricolae")
 library(agricolae)
 ```
-
 
 # Analyse de la variance (ANOVA)
 
@@ -19,8 +47,40 @@ Exploration jeu de données
 
 ## ANOVA à 1 facteur (une variable qualitative)
 
+
+```{r import, include=FALSE}
+# Fichiers (via params) + contrôles d'existence
+files_ok <- all(
+  file.exists(here::here(params$fichier_resistance)),
+  file.exists(here::here(params$fichier_croissance)),
+  file.exists(here::here(params$fichier_vache))
+)
+stopifnot(files_ok)
+
+resistance <- read.table(
+  here::here(params$fichier_resistance),
+  header = TRUE, sep = "", quote = "", comment.char = "",
+  stringsAsFactors = TRUE
+)
+
+croissance <- read.table(
+  here::here(params$fichier_croissance),
+  header = TRUE, sep = "", quote = "", comment.char = "",
+  stringsAsFactors = TRUE
+)
+
+vache <- read.table(
+  here::here(params$fichier_vache),
+  header = TRUE, sep = "", quote = "", comment.char = "",
+  stringsAsFactors = TRUE
+)
+
+str(resistance); str(croissance); str(vache)
+```
+
+
 ```{r Exploration_jeu_de_donnes}
-resistance <- read.table("resistance.txt", header=T, stringsAsFactors=T); head(resistance) ; tail(resistance)
+head(resistance) ; tail(resistance)
 names(resistance)
 
 table(resistance$lignee)
@@ -119,7 +179,7 @@ La lignée DZA45 est significativement plus resistance comparé aux autres lign�
 
 ```{r}
 
-croissance <- read.table("croissance.txt", header=T, stringsAsFactors=T) ; head(croissance)
+head(croissance)
 
                          
 layout( matrix( c(1,2,3,3) , nrow=2, ncol=2, byrow = FALSE))
@@ -211,7 +271,7 @@ On trouve une difference significative uniquement entre le changement de tempera
 # Production laitiere 
 ```{r echo=FALSE}
 # Lecture du fichier
-vache <- read.table("vache.txt", header=TRUE, stringsAsFactors=TRUE)
+
 head(vache)
 ``` 
 Lecture du fichier
@@ -300,42 +360,44 @@ Les vaches Bearnaise ont une porduction laitiere significativement plus importan
 duncan.test(res, "race", alpha=0.05, console=TRUE)
 ```
 
+```{r export_figures , include=FALSE}
+# Exporter figures principales dans output/
 
+# 1. Boxplot resistance
+outfile_res <- file.path(path_output, "boxplot_resistance.jpg")
+jpeg(outfile_res, width = 800, height = 600)
+boxplot(resistance$score ~ resistance$lignee,
+        col = "green", ylab = "score",
+        main = "Scores de résistance par lignée")
+dev.off()
 
+# 2. Histogramme croissance (par engrais + température)
+outfile_cro <- file.path(path_output, "boxplot_croissance.jpg")
+jpeg(outfile_cro, width = 800, height = 600)
+boxplot(croissance$hauteur ~ interaction(croissance$temperature, croissance$engrais),
+        las = 3, col = "orange",
+        ylab = "hauteur (cm)",
+        main = "Hauteur selon température et engrais")
+dev.off()
 
+# 3. Interaction plot croissance
+outfile_inter <- file.path(path_output, "interaction_plot_croissance.jpg")
+jpeg(outfile_inter, width = 800, height = 600)
+interaction.plot(croissance$temperature, croissance$engrais, croissance$hauteur,
+                 main = "Interaction température x engrais",
+                 ylab = "Hauteur moyenne (cm)", xlab = "Température")
+dev.off()
 
+# 4. Boxplot vaches
+outfile_vac <- file.path(path_output, "boxplot_vaches.jpg")
+jpeg(outfile_vac, width = 800, height = 600)
+boxplot(vache$prod_lait ~ vache$race,
+        col = c("lightblue","lightgreen","orange"),
+        ylab = "Production de lait (L/jour)",
+        main = "Production laitière selon la race")
+dev.off()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Vérification
+list.files(path_output, pattern = ".jpg$")
+```
 
